@@ -1,0 +1,135 @@
+/* Neoarcana — "The Reading Room"
+   One stylesheet, no build step. Tokens up top; everything reads from them. */
+
+:root {
+  --bone: #faf8f4;
+  --ink: #191714;
+  --ink-mid: #57524a;
+  --oxblood: #7a2e2a;
+  --hairline: #e3ded4;
+  --wash: #f2efe7;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: "Avenir Next", "Helvetica Neue", system-ui, sans-serif;
+}
+
+* { margin: 0; box-sizing: border-box; }
+body { background: var(--bone); color: var(--ink); font-family: var(--serif); line-height: 1.65; }
+.wrap { max-width: 920px; margin: 0 auto; padding: 0 28px; }
+a { color: inherit; }
+
+/* ---------- masthead & footer ---------- */
+.masthead {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 26px 0; border-bottom: 1px solid var(--ink);
+  font-family: var(--sans); font-size: 13px; letter-spacing: .08em;
+}
+.masthead .brand { font-weight: 600; letter-spacing: .22em; text-transform: uppercase; text-decoration: none; }
+.masthead a:not(.brand) { color: var(--ink-mid); text-decoration: none; }
+.masthead a:hover { color: var(--oxblood); }
+
+footer {
+  border-top: 1px solid var(--ink); margin-top: 110px; padding: 24px 0 48px;
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  font-family: var(--sans); font-size: 12px; color: var(--ink-mid);
+}
+footer a { color: inherit; }
+
+/* ---------- hero ---------- */
+.hero { padding: 90px 0 70px; }
+.hero-small { padding: 70px 0 40px; }
+.kicker {
+  font-family: var(--sans); font-size: 12px; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--oxblood); margin-bottom: 22px;
+}
+h1 { font-size: clamp(40px, 7.5vw, 76px); line-height: 1.04; font-weight: 400; letter-spacing: -.015em; max-width: 16ch; }
+.standfirst { margin-top: 28px; max-width: 52ch; font-size: 19px; color: var(--ink-mid); }
+.standfirst a { color: var(--oxblood); }
+
+/* ---------- spread index ---------- */
+.index { border-top: 1px solid var(--ink); margin-bottom: 40px; }
+.row {
+  display: grid; grid-template-columns: 64px 1fr auto; align-items: baseline; gap: 22px;
+  padding: 26px 4px; border-bottom: 1px solid var(--hairline);
+  text-decoration: none; transition: background .2s;
+}
+.row:hover { background: var(--wash); }
+.row:hover .go { transform: translateX(6px); color: var(--oxblood); }
+.no { font-family: var(--sans); font-size: 13px; color: var(--ink-mid); }
+.row h3 { font-size: 26px; font-weight: 400; display: inline; }
+.row .desc { font-family: var(--sans); font-size: 14px; color: var(--ink-mid); margin-left: 14px; }
+.go { font-size: 20px; transition: transform .25s, color .25s; }
+
+/* ---------- ask form ---------- */
+.ask { border-top: 1px solid var(--ink); padding-top: 34px; max-width: 640px; }
+.ask label { display: block; }
+.ask input[type="text"] {
+  width: 100%; margin-top: 14px; padding: 14px 2px;
+  font-family: var(--serif); font-size: 24px; font-style: italic;
+  background: transparent; color: var(--ink);
+  border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; outline: none;
+}
+.ask input[type="text"]:focus { border-bottom-color: var(--oxblood); }
+.ask input::placeholder { color: #b5afa2; }
+.ask-actions { margin-top: 30px; display: flex; align-items: center; gap: 26px; }
+button {
+  font-family: var(--sans); font-size: 13px; letter-spacing: .18em; text-transform: uppercase;
+  background: var(--ink); color: var(--bone); border: 1px solid var(--ink);
+  padding: 14px 30px; cursor: pointer; transition: background .2s, color .2s;
+}
+button:hover { background: var(--oxblood); border-color: var(--oxblood); }
+.quiet { font-family: var(--sans); font-size: 13px; color: var(--ink-mid); text-decoration-color: var(--hairline); }
+.quiet:hover { color: var(--oxblood); }
+
+/* ---------- positions list ---------- */
+.positions { margin-top: 80px; }
+.pos-row {
+  display: grid; grid-template-columns: 64px 1fr; gap: 22px;
+  padding: 18px 4px; border-bottom: 1px solid var(--hairline);
+}
+.pos-row p { font-family: var(--sans); font-size: 14px; color: var(--ink-mid); max-width: 62ch; }
+
+/* ---------- reading ---------- */
+.reading { padding-top: 60px; }
+.reading-kicker {
+  font-family: var(--sans); font-size: 12px; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--oxblood); margin-bottom: 14px;
+}
+.question { font-size: clamp(26px, 4vw, 38px); font-style: italic; max-width: 28ch; line-height: 1.25; margin-bottom: 58px; }
+.quiet-question { color: var(--ink-mid); }
+
+.plates { display: grid; gap: 40px; margin-bottom: 70px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.plates-1 { max-width: 300px; }
+.plates-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 640px) { .plates-3 { grid-template-columns: 1fr 1fr; } }
+.plate img {
+  display: block; width: 100%; border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(25,23,20,.2), 0 16px 36px -22px rgba(25,23,20,.45);
+  transition: transform .3s ease;
+}
+.plate:hover img { transform: scale(1.02); }
+figcaption { margin-top: 16px; border-top: 1px solid var(--ink); padding-top: 10px; }
+.plate-no { font-family: var(--sans); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--oxblood); }
+.plate-name { font-size: 20px; margin-top: 2px; }
+.plate-note { font-family: var(--sans); font-size: 13px; color: var(--ink-mid); margin-top: 6px; line-height: 1.5; }
+details { margin-top: 8px; }
+summary {
+  font-family: var(--sans); font-size: 12px; letter-spacing: .06em;
+  color: var(--ink-mid); cursor: pointer;
+}
+summary:hover { color: var(--oxblood); }
+
+/* ---------- interpretation essay ---------- */
+.essay { max-width: 62ch; }
+.essay p { font-size: 18px; }
+.essay p + p { margin-top: 16px; }
+.essay > p:first-child::first-letter {
+  float: left; font-size: 64px; line-height: .85; padding: 6px 10px 0 0; color: var(--oxblood);
+}
+.faq-essay { border-top: 1px solid var(--ink); padding-top: 10px; }
+.faq-essay h2 { font-size: 24px; font-weight: 400; margin: 44px 0 10px; }
+.faq-essay p { color: var(--ink-mid); font-size: 17px; }
+.pending { color: var(--ink-mid); font-style: italic; }
+.ellip::after { content: ""; animation: ellip 1.6s steps(4) infinite; }
+@keyframes ellip { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+
+.again { margin-top: 60px; display: flex; gap: 26px; }

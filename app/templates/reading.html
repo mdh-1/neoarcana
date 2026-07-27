@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Your reading — Neoarcana{% endblock %}
+{% block content %}
+{% set roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X"] %}
+<section class="reading">
+  <div class="reading-kicker">Reading {{ reading.id }} · {{ reading.spread.title }}
+    {%- if reading.entropy_source == "random.org" %} · shuffled by atmospheric noise{% endif %}</div>
+  {% if reading.question %}
+  <p class="question">&ldquo;{{ reading.question }}&rdquo;</p>
+  {% else %}
+  <p class="question quiet-question">A general reading — no question asked.</p>
+  {% endif %}
+
+  <div class="plates plates-{{ reading.cards|length }}">
+    {% for c in reading.cards %}
+    <figure class="plate">
+      <img src="/static/tarot-images/{{ c.picture }}" alt="{{ c.display_name }}"
+           {% if not loop.first %}loading="lazy"{% endif %}>
+      <figcaption>
+        <div class="plate-no">Plate {{ roman[c.position - 1] }} · {{ c.position_name }}</div>
+        <div class="plate-name">{{ c.display_name }}</div>
+        <p class="plate-note">{{ c.meaning }}</p>
+        <details>
+          <summary>This position</summary>
+          <p class="plate-note">{{ c.position_description }}</p>
+        </details>
+      </figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+
+  <div class="essay" id="essay"
+       data-stream="{% if reading.status != 'complete' %}/readings/{{ reading.id }}/stream{% endif %}">
+    {% if reading.status == 'complete' %}
+      {% for para in reading.interpretation.split('\n\n') %}<p>{{ para }}</p>{% endfor %}
+    {% else %}
+      <p class="pending">The cards are on the table. Reading them now<span class="ellip">&hellip;</span></p>
+    {% endif %}
+  </div>
+
+  <div class="again">
+    <a class="quiet" href="/ask/{{ reading.spread.key }}">Draw again</a>
+    <a class="quiet" href="/">Different spread</a>
+  </div>
+</section>
+<script src="/static/reading.js"></script>
+{% endblock %}

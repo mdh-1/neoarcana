@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Neoarcana — a tarot reading, plainly given{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="/static/favicon.ico">
+</head>
+<body>
+  <div class="wrap">
+    <nav class="masthead">
+      <a class="brand" href="/">Neoarcana</a>
+      <a href="/faq">About the deck</a>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <footer>
+      <span>Shuffled with true randomness · <a href="https://www.random.org" rel="noopener">random.org</a></span>
+      <span>Offered for reflection, not prediction</span>
+    </footer>
+  </div>
+</body>
+</html>

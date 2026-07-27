@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div class="kicker">A tarot reading, plainly given</div>
+  <h1>Seventy&#8209;eight cards. One honest answer.</h1>
+  <p class="standfirst">No candles, no costumes. A deck shuffled by atmospheric
+  noise, read closely, and set down in clear prose. Choose a spread to begin.</p>
+</header>
+
+<section class="index">
+  {% for spread in spreads %}
+  <a class="row" href="/ask/{{ spread.key }}">
+    <span class="no">{{ "%02d"|format(loop.index) }}</span>
+    <span><h3>{{ spread.title }}</h3><span class="desc">{{ spread.tagline }}</span></span>
+    <span class="go">&rarr;</span>
+  </a>
+  {% endfor %}
+</section>
+{% endblock %}

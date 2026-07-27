@@ -1,0 +1,143 @@
+import json
+import time
+from collections import defaultdict, deque
+from pathlib import Path
+
+from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+from .config import get_settings
+from .domain.deck import load_deck
+from .domain.spreads import SPREADS, resolve_spread
+from .services import reading as reading_service
+
+BASE_DIR = Path(__file__).resolve().parent
+
+app = FastAPI(title="Neoarcana", docs_url=None, redoc_url=None)
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
+
+load_deck()  # validate card data at startup, not first request
+
+
+# --- tiny per-IP rate limit on reading creation (LLM calls cost money) ---
+_hits: dict[str, deque[float]] = defaultdict(deque)
+
+
+def _rate_limited(ip: str, per_hour: int) -> bool:
+    now = time.time()
+    q = _hits[ip]
+    while q and now - q[0] > 3600:
+        q.popleft()
+    if len(q) >= per_hour:
+        return True
+    q.append(now)
+    return False
+
+
+def _page(request: Request, name: str, status_code: int = 200, **ctx) -> HTMLResponse:
+    return templates.TemplateResponse(request, name, ctx, status_code=status_code)
+
+
+# ------------------------------- pages -------------------------------
+
+
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return _page(request, "index.html", spreads=list(SPREADS.values()))
+
+
+@app.get("/ask/{spread_key}", response_class=HTMLResponse)
+async def ask(request: Request, spread_key: str):
+    spread = resolve_spread(spread_key)
+    if spread is None:
+        raise HTTPException(404)
+    return _page(request, "ask.html", spread=spread)
+
+
+@app.post("/readings")
+async def create_reading(request: Request, spread_key: str = Form(...), question: str = Form("")):
+    spread = resolve_spread(spread_key)
+    if spread is None:
+        raise HTTPException(400, "Unknown spread")
+    settings = get_settings()
+    ip = request.client.host if request.client else "?"
+    if _rate_limited(ip, settings.readings_per_hour):
+        return _page(request, "error.html", status_code=429,
+                     message="The deck needs a rest — please try again in a while.")
+    r = await reading_service.create_reading(settings, spread, question)
+    return RedirectResponse(f"/readings/{r.id}", status_code=303)
+
+
+@app.get("/readings/{reading_id}", response_class=HTMLResponse)
+async def show_reading(request: Request, reading_id: str):
+    r = reading_service.store.get(reading_id)
+    if r is None:
+        return _page(request, "error.html", status_code=404,
+                     message="This reading has drifted beyond recall. Draw a fresh one.")
+    return _page(request, "reading.html", reading=r)
+
+
+@app.get("/faq", response_class=HTMLResponse)
+async def faq(request: Request):
+    return _page(request, "faq.html")
+
+
+# ---------------------------- streaming ------------------------------
+
+
+@app.get("/readings/{reading_id}/stream")
+async def stream_reading(reading_id: str):
+    r = reading_service.store.get(reading_id)
+    if r is None:
+        raise HTTPException(404)
+
+    async def event_source():
+        settings = get_settings()
+        async for chunk in reading_service.interpret(settings, r):
+            yield f"data: {json.dumps(chunk)}\n\n"
+        yield "event: done\ndata: {}\n\n"
+
+    return StreamingResponse(
+        event_source(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+# ------------------------- minimal JSON API --------------------------
+# The tidy exit hatch: a future SPA or mobile app talks to these.
+
+
+@app.get("/api/v1/readings/{reading_id}")
+async def api_reading(reading_id: str):
+    r = reading_service.store.get(reading_id)
+    if r is None:
+        raise HTTPException(404)
+    return {
+        "id": r.id,
+        "spread": r.spread.key,
+        "question": r.question,
+        "entropy_source": r.entropy_source,
+        "status": r.status,
+        "interpretation": r.interpretation,
+        "cards": [
+            {
+                "position": c.position,
+                "position_name": c.position_name,
+                "name": c.display_name,
+                "reversed": c.is_reversed,
+                "picture": c.picture,
+                "meaning": c.meaning,
+                "crowley_meaning": c.crowley_meaning,
+            }
+            for c in r.cards
+        ],
+    }
+
+
+@app.get("/health")
+async def health():
+    return {"ok": True}
