@@ -1,0 +1,5 @@
+Break up the api response into json.Send results card by card use markdown!
+Try mistral free tier
+System prompt to get data back.
+Need better info for validation errors
+

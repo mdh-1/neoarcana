@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Env & secrets
+.env
+
+# Logs
+logs/
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+.ipynb_checkpoints/
+
+# Legacy frontend (has its own archived git repo; superseded by app/)
+celtic-cross-journey/
+
+# Legacy scratch
+tarot-main/Untitled.ipynb
+tarot-main/test_tarot_reader.ipynb
