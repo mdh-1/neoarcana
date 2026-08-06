@@ -55,6 +55,7 @@ class Reading:
     question: str
     cards: list[DrawnCard]
     entropy_source: str
+    language_hint: str = ""  # browser's preferred language, e.g. "es"
     created: float = field(default_factory=time.time)
     interpretation: str = ""
     status: str = "pending"  # pending | streaming | complete | error
@@ -83,7 +84,9 @@ class ReadingStore:
 store = ReadingStore()
 
 
-async def create_reading(settings: Settings, spread: Spread, question: str) -> Reading:
+async def create_reading(
+    settings: Settings, spread: Spread, question: str, language_hint: str = ""
+) -> Reading:
     entropy = await draw_entropy(spread.card_count, settings.random_api_key)
     reading = Reading(
         id=secrets.token_urlsafe(8),
@@ -91,6 +94,7 @@ async def create_reading(settings: Settings, spread: Spread, question: str) -> R
         question=question.strip()[:500],
         cards=assemble_spread(spread, entropy.indices, entropy.reversals),
         entropy_source=entropy.source,
+        language_hint=language_hint,
     )
     store.put(reading)
     return reading
@@ -102,8 +106,16 @@ def _user_prompt(reading: Reading) -> str:
         f'My question: "{reading.question}"'
         if reading.question
         else "I have not asked a question; give a general reading.",
-        "The cards drawn, in position order:",
     ]
+    if reading.language_hint:
+        # Tiebreaker for general readings and short, ambiguous questions —
+        # a clear question language still wins per the system prompt.
+        lines.append(
+            f"(My browser's preferred language is '{reading.language_hint}'. "
+            "If I asked no question, or its language is unclear, "
+            "answer in that language.)"
+        )
+    lines.append("The cards drawn, in position order:")
     for c in reading.cards:
         lines.append(f"{c.position}. {c.position_name}: {c.display_name}")
         lines.append(f"   (position meaning: {c.position_description})")

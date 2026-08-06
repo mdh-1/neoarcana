@@ -41,6 +41,19 @@ def _page(request: Request, name: str, status_code: int = 200, **ctx) -> HTMLRes
     return templates.TemplateResponse(request, name, ctx, status_code=status_code)
 
 
+def _language_hint(request: Request) -> str:
+    """First tag of Accept-Language, e.g. "es" from "es-ES,es;q=0.9,en;q=0.8".
+
+    English and wildcard yield no hint — English is already the default,
+    and the hint only serves as a tiebreaker for general readings and
+    short questions whose language the model can't detect."""
+    first = request.headers.get("accept-language", "")
+    first = first.split(",")[0].split(";")[0].strip().lower()
+    if not first or first == "*" or first.startswith("en"):
+        return ""
+    return first
+
+
 # ------------------------------- pages -------------------------------
 
 
@@ -67,7 +80,9 @@ async def create_reading(request: Request, spread_key: str = Form(...), question
     if _rate_limited(ip, settings.readings_per_hour):
         return _page(request, "error.html", status_code=429,
                      message="The deck needs a rest — please try again in a while.")
-    r = await reading_service.create_reading(settings, spread, question)
+    r = await reading_service.create_reading(
+        settings, spread, question, language_hint=_language_hint(request)
+    )
     return RedirectResponse(f"/readings/{r.id}", status_code=303)
 
 
