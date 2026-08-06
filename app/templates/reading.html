@@ -11,6 +11,60 @@
   <p class="question quiet-question">A general reading — no question asked.</p>
   {% endif %}
 
+  {% macro cc_card(c) %}
+  <figure class="cc-card">
+    <img src="/static/tarot-images/{{ c.picture }}" alt="{{ c.display_name }}">
+    <figcaption>
+      <div class="cc-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
+      <div class="cc-name">{{ c.display_name }}</div>
+    </figcaption>
+  </figure>
+  {% endmacro %}
+
+  {% if reading.spread.key == "celtic_cross" %}
+  {% set c = reading.cards %}
+  <div class="cc">
+    <div class="cc-cross">
+      <div class="cc-above">{{ cc_card(c[4]) }}</div>
+      <div class="cc-past">{{ cc_card(c[2]) }}</div>
+      <div class="cc-center">
+        <img class="cc-base" src="/static/tarot-images/{{ c[0].picture }}" alt="{{ c[0].display_name }}">
+        <img class="cc-crossing" src="/static/tarot-images/{{ c[1].picture }}" alt="{{ c[1].display_name }} (crossing)">
+        <figcaption>
+          <div class="cc-pos">{{ roman[0] }} · {{ c[0].position_name }}</div>
+          <div class="cc-name">{{ c[0].display_name }}</div>
+          <div class="cc-pos">{{ roman[1] }} · {{ c[1].position_name }}, crossing</div>
+          <div class="cc-name">{{ c[1].display_name }}</div>
+        </figcaption>
+      </div>
+      <div class="cc-future">{{ cc_card(c[3]) }}</div>
+      <div class="cc-below">{{ cc_card(c[5]) }}</div>
+    </div>
+    <div class="cc-staff">
+      {{ cc_card(c[9]) }}
+      {{ cc_card(c[8]) }}
+      {{ cc_card(c[7]) }}
+      {{ cc_card(c[6]) }}
+    </div>
+  </div>
+
+  <section class="cc-index">
+    <div class="kicker">The plates</div>
+    {% for c in reading.cards %}
+    <div class="pos-row">
+      <span class="no">{{ "%02d"|format(c.position) }}</span>
+      <div>
+        <strong>{{ c.position_name }}</strong> — {{ c.display_name }}
+        <p>{{ c.meaning }}</p>
+        <details>
+          <summary>This position</summary>
+          <p>{{ c.position_description }}</p>
+        </details>
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+  {% else %}
   <div class="plates plates-{{ reading.cards|length }}">
     {% for c in reading.cards %}
     <figure class="plate">
@@ -28,6 +82,7 @@
     </figure>
     {% endfor %}
   </div>
+  {% endif %}
 
   <div class="essay" id="essay"
        data-stream="{% if reading.status != 'complete' %}/readings/{{ reading.id }}/stream{% endif %}">
