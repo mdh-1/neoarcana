@@ -21,8 +21,8 @@ from ..config import Settings
 class ProviderSpec:
     name: str
     base_url: str
-    model: str
     key_attr: str  # attribute on Settings holding the API key
+    model_attr: str  # attribute on Settings holding the model ID
     temperature: float = 1.1
 
 
@@ -30,29 +30,29 @@ PROVIDER_SPECS = {
     "deepseek": ProviderSpec(
         name="deepseek",
         base_url="https://api.deepseek.com/v1",
-        model="deepseek-chat",
         key_attr="deepseek_api_key",
+        model_attr="deepseek_model",
     ),
-    "grok": ProviderSpec(
-        name="grok",
-        base_url="https://api.x.ai/v1",
-        model="grok-3-mini",
-        key_attr="grok_api_key",
+    "gemini": ProviderSpec(
+        name="gemini",
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai",
+        key_attr="gemini_api_key",
+        model_attr="gemini_model",
     ),
     "mistral": ProviderSpec(
         name="mistral",
         base_url="https://api.mistral.ai/v1",
-        model="mistral-small-latest",
         key_attr="mistral_api_key",
+        model_attr="mistral_model",
     ),
 }
 
 
 async def _stream_openai_compat(
-    spec: ProviderSpec, api_key: str, system: str, user: str
+    spec: ProviderSpec, settings: Settings, system: str, user: str
 ) -> AsyncIterator[str]:
     payload = {
-        "model": spec.model,
+        "model": getattr(settings, spec.model_attr),
         "temperature": spec.temperature,
         "stream": True,
         "messages": [
@@ -60,6 +60,7 @@ async def _stream_openai_compat(
             {"role": "user", "content": user},
         ],
     }
+    api_key = getattr(settings, spec.key_attr)
     async with httpx.AsyncClient(timeout=httpx.Timeout(90.0, connect=10.0)) as client:
         async with client.stream(
             "POST",
@@ -87,7 +88,7 @@ _MOCK_TEXT = (
     "this interpretation is a stand-in streamed by the mock provider.\n\n"
     "Each card above still shows its traditional meaning — the draw itself "
     "is real and used true randomness where available.\n\n"
-    "**The thread.** Add a DeepSeek, Grok or Mistral key to `.env` and this "
+    "**The thread.** Add a DeepSeek, Gemini or Mistral key to `.env` and this "
     "space will hold a genuine reading, streamed card by card."
 )
 
@@ -118,10 +119,9 @@ async def stream_interpretation(
     last_error: Exception | None = None
     for name in available_providers(settings):
         spec = PROVIDER_SPECS[name]
-        key = getattr(settings, spec.key_attr)
         try:
             got_content = False
-            async for chunk in _stream_openai_compat(spec, key, system, user):
+            async for chunk in _stream_openai_compat(spec, settings, system, user):
                 got_content = True
                 yield chunk
             if got_content:

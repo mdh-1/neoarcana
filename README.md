@@ -27,8 +27,11 @@ cp .env.example .env   # then add whichever keys you have
 
 | Key | Provides | Without it |
 |---|---|---|
-| `DEEPSEEK_API_KEY` / `GROK_API_KEY` / `MISTRAL_API_KEY` | interpretations (first configured provider wins, falls through on errors) | mock interpreter |
+| `DEEPSEEK_API_KEY` / `GEMINI_API_KEY` / `MISTRAL_API_KEY` | interpretations (first configured provider wins, falls through on errors) | mock interpreter |
 | `RANDOM_API_KEY` ([random.org](https://api.random.org)) | true atmospheric-noise shuffles | OS cryptographic randomness |
+
+Model IDs live in config (`DEEPSEEK_MODEL`, `GEMINI_MODEL`, `MISTRAL_MODEL` in
+`.env`), so when a vendor retires a model the fix is an env edit, not a deploy.
 
 The reading page honestly reports which entropy source shuffled it.
 
@@ -61,7 +64,7 @@ app/
 │   └── spreads.py       # position definitions — single source of truth
 ├── providers/
 │   ├── entropy.py       # random.org → CSPRNG fallback
-│   └── llm.py           # deepseek/grok/mistral via one httpx streaming client
+│   └── llm.py           # deepseek/gemini/mistral via one httpx streaming client
 ├── services/reading.py  # reading lifecycle + bounded in-memory store
 ├── templates/           # Jinja pages
 └── static/              # style.css, reading.js, 640px card images
