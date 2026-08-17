@@ -19,9 +19,6 @@ logs/
 .vscode/
 .ipynb_checkpoints/
 
-# Legacy frontend (has its own archived git repo; superseded by app/)
-celtic-cross-journey/
-
-# Legacy scratch
-tarot-main/Untitled.ipynb
-tarot-main/test_tarot_reader.ipynb
+# Full-resolution source scans (203MB) — kept on disk, not in git;
+# app/static/tarot-images holds the 640px versions the site serves
+archive/

@@ -6,6 +6,7 @@ SPA cached readings per question, so asking the same question twice
 returned the same cards forever.
 """
 
+import logging
 import secrets
 import threading
 import time
@@ -141,6 +142,9 @@ async def interpret(settings: Settings, reading: Reading) -> AsyncIterator[str]:
             yield chunk
         reading.status = "complete"
     except Exception:
+        logging.getLogger(__name__).exception(
+            "all providers failed for reading %s", reading.id
+        )
         reading.status = "error"
         yield (
             "\n\n**The cards were drawn, but the interpreter is unavailable "

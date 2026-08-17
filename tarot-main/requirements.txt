@@ -1,5 +1,0 @@
-loguru
-mistralai
-openai
-pydantic
-requests

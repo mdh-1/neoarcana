@@ -70,8 +70,12 @@ app/
 └── static/              # style.css, reading.js, 640px card images
 data/cards.json          # all 78 cards, schema-validated at startup
 tests/                   # offline-friendly; no keys, no network
-tarot-main/              # legacy backend, kept for reference
+archive/                 # full-res source scans (untracked; site serves 640px)
 ```
+
+The legacy codebases this grew from live in git history (`git log --all --
+-- tarot-main/` for the original backend); the working tree carries only
+the current app.
 
 ## Development
 

@@ -12,8 +12,9 @@ def test_priority_order_filters_to_available_keys():
     s = Settings(_env_file=None, gemini_api_key="g", mistral_api_key="m")
     assert available_providers(s) == ["gemini", "mistral"]
 
+    # default order is gemini,mistral,deepseek (DeepSeek's 2026 peak pricing)
     s = Settings(_env_file=None, deepseek_api_key="d", mistral_api_key="m")
-    assert available_providers(s) == ["deepseek", "mistral"]
+    assert available_providers(s) == ["mistral", "deepseek"]
 
 
 def test_provider_order_is_configurable():
@@ -44,5 +45,5 @@ def test_current_model_defaults():
     deepseek-chat and grok-3-mini both retired in 2026 — model IDs rot."""
     s = Settings(_env_file=None)
     assert s.deepseek_model == "deepseek-v4-flash"
-    assert s.gemini_model == "gemini-2.5-flash-lite"
+    assert s.gemini_model == "gemini-3.5-flash-lite"
     assert s.mistral_model == "mistral-small-latest"

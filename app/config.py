@@ -21,13 +21,14 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
 
     # Provider priority, first available key wins; falls through on errors.
-    llm_providers: str = "deepseek,gemini,mistral"
+    # Gemini leads since DeepSeek's Aug 2026 move to peak/off-peak pricing.
+    llm_providers: str = "gemini,mistral,deepseek"
 
     # Model IDs are config, not code: when a vendor retires a slug
     # (deepseek-chat and grok-3-mini both died in 2026), the fix is a
     # .env edit, not a deploy.
     deepseek_model: str = "deepseek-v4-flash"
-    gemini_model: str = "gemini-2.5-flash-lite"
+    gemini_model: str = "gemini-3.5-flash-lite"  # 2.5 is closed to new API users
     mistral_model: str = "mistral-small-latest"
 
     readings_per_hour: int = 10  # per client IP

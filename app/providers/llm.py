@@ -9,12 +9,15 @@ round-trip crashed whenever the model paraphrased a card name).
 
 import asyncio
 import json
+import logging
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 
 import httpx
 
 from ..config import Settings
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -126,8 +129,18 @@ async def stream_interpretation(
                 yield chunk
             if got_content:
                 return
-        except Exception as exc:  # try the next provider
+        except httpx.HTTPStatusError as exc:  # try the next provider
             last_error = exc
+            body = ""
+            try:
+                body = (await exc.response.aread()).decode(errors="replace")[:300]
+            except Exception:
+                pass
+            logger.warning("provider %s failed: %s %s", name, exc.response.status_code, body)
+            continue
+        except Exception as exc:  # network/timeout — try the next provider
+            last_error = exc
+            logger.warning("provider %s failed: %r", name, exc)
             continue
 
     if last_error is not None:
