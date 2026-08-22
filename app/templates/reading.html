@@ -19,18 +19,19 @@
       <div class="cc-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
       <div class="cc-name">{{ c.display_name }}</div>
     </figcaption>
-    <div class="cc-tip" role="note">
-      <div class="cc-tip-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
-      <div class="cc-tip-name">{{ c.display_name }}</div>
-      <p class="cc-tip-meaning">{{ c.meaning }}</p>
-      <p class="cc-tip-desc">{{ c.position_description }}</p>
+    <div class="tip" role="note">
+      <div class="tip-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
+      <div class="tip-name">{{ c.display_name }}</div>
+      <p class="tip-meaning">{{ c.meaning }}</p>
+      <p class="tip-desc">{{ c.position_description }}</p>
     </div>
   </figure>
   {% endmacro %}
 
+  <p class="hover-hint">Hover a card for its meaning.</p>
+
   {% if reading.spread.key == "celtic_cross" %}
   {% set c = reading.cards %}
-  <p class="cc-hint">Hover a card for its meaning.</p>
   <div class="cc">
     <div class="cc-cross">
       <div class="cc-above">{{ cc_card(c[4]) }}</div>
@@ -44,13 +45,13 @@
           <div class="cc-pos">{{ roman[1] }} · {{ c[1].position_name }}, crossing</div>
           <div class="cc-name">{{ c[1].display_name }}</div>
         </figcaption>
-        <div class="cc-tip" role="note">
-          <div class="cc-tip-pos">{{ roman[0] }} · {{ c[0].position_name }}</div>
-          <div class="cc-tip-name">{{ c[0].display_name }}</div>
-          <p class="cc-tip-meaning">{{ c[0].meaning }}</p>
-          <div class="cc-tip-pos">{{ roman[1] }} · {{ c[1].position_name }}, crossing</div>
-          <div class="cc-tip-name">{{ c[1].display_name }}</div>
-          <p class="cc-tip-meaning">{{ c[1].meaning }}</p>
+        <div class="tip" role="note">
+          <div class="tip-pos">{{ roman[0] }} · {{ c[0].position_name }}</div>
+          <div class="tip-name">{{ c[0].display_name }}</div>
+          <p class="tip-meaning">{{ c[0].meaning }}</p>
+          <div class="tip-pos">{{ roman[1] }} · {{ c[1].position_name }}, crossing</div>
+          <div class="tip-name">{{ c[1].display_name }}</div>
+          <p class="tip-meaning">{{ c[1].meaning }}</p>
         </div>
       </div>
       <div class="cc-future">{{ cc_card(c[3]) }}</div>
@@ -83,9 +84,15 @@
   {% else %}
   <div class="plates plates-{{ reading.cards|length }}">
     {% for c in reading.cards %}
-    <figure class="plate">
+    <figure class="plate" tabindex="0">
       <img src="/static/tarot-images/{{ c.picture }}" alt="{{ c.display_name }}"
            {% if not loop.first %}loading="lazy"{% endif %}>
+      <div class="tip" role="note">
+        <div class="tip-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
+        <div class="tip-name">{{ c.display_name }}</div>
+        <p class="tip-meaning">{{ c.meaning }}</p>
+        <p class="tip-desc">{{ c.position_description }}</p>
+      </div>
       <figcaption>
         <div class="plate-no">Plate {{ roman[c.position - 1] }} · {{ c.position_name }}</div>
         <div class="plate-name">{{ c.display_name }}</div>

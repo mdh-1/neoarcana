@@ -101,6 +101,10 @@ button:hover { background: var(--oxblood); border-color: var(--oxblood); }
 .plates-1 { max-width: 300px; }
 .plates-3 { grid-template-columns: repeat(3, 1fr); }
 @media (max-width: 640px) { .plates-3 { grid-template-columns: 1fr 1fr; } }
+/* Positioning context for the hover panel. Plates sit in a row, and the
+   panel is wider than a plate, so it opens upward and centred; the panel's
+   pointer-events:none means the fade-in never steals the hover. */
+.plate { position: relative; }
 .plate img {
   display: block; width: 100%; border-radius: 3px;
   box-shadow: 0 1px 3px rgba(25,23,20,.2), 0 16px 36px -22px rgba(25,23,20,.45);
@@ -174,18 +178,18 @@ summary:hover { color: var(--oxblood); }
   .cc-staff .cc-card { width: 108px; }
 }
 
-/* ---------- celtic cross tooltips ---------- */
+/* ---------- card tooltips (all spreads) ---------- */
 /* The plates index below carries the same text, so this is an aid rather
    than the only route to it: touch devices, which have no hover, lose
    nothing. Keyboard users reach it through tabindex + :focus-within. */
-.cc-hint {
+.hover-hint {
   display: none;
   font-family: var(--sans); font-size: 12px; letter-spacing: .06em;
   color: var(--ink-mid); text-align: center; margin-bottom: 18px;
 }
-@media (hover: hover) { .cc-hint { display: block; } }
+@media (hover: hover) { .hover-hint { display: block; } }
 
-.cc-tip {
+.tip {
   position: absolute;
   z-index: 60;
   width: 250px;
@@ -202,30 +206,39 @@ summary:hover { color: var(--oxblood); }
   transition: opacity .15s ease;
   pointer-events: none;   /* never steals the hover from the card */
 }
-.cc-card:hover .cc-tip, .cc-card:focus-within .cc-tip,
-.cc-center:hover .cc-tip, .cc-center:focus-within .cc-tip {
+.cc-card:hover .tip, .cc-card:focus-within .tip,
+.cc-center:hover .tip, .cc-center:focus-within .tip,
+.plate:hover .tip, .plate:focus-within .tip {
   opacity: 1;
   visibility: visible;
 }
-.cc-card:focus-visible, .cc-center:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 4px; }
+.cc-card:focus-visible, .cc-center:focus-visible, .plate:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 4px; }
 
 /* Nothing sits above the top of the cross, so that one opens downwards. */
-.cc-above .cc-tip { bottom: auto; top: calc(100% + 10px); }
+.cc-above .tip { bottom: auto; top: calc(100% + 10px); }
 /* The staff runs down the right edge; opening leftwards keeps it on screen. */
-.cc-staff .cc-tip { left: auto; right: calc(100% + 12px); bottom: auto; top: 0; transform: none; }
+.cc-staff .tip { left: auto; right: calc(100% + 12px); bottom: auto; top: 0; transform: none; }
 
-.cc-tip-pos {
+.tip-pos {
   font-family: var(--sans); font-size: 10px; letter-spacing: .18em;
   text-transform: uppercase; color: var(--oxblood);
 }
-.cc-tip-name { font-size: 15px; line-height: 1.3; margin-bottom: 4px; }
-.cc-tip-meaning { font-family: var(--sans); font-size: 12.5px; line-height: 1.45; color: var(--ink); }
-.cc-tip-desc {
+.tip-name { font-size: 15px; line-height: 1.3; margin-bottom: 4px; }
+.tip-meaning { font-family: var(--sans); font-size: 12.5px; line-height: 1.45; color: var(--ink); }
+.tip-desc {
   font-family: var(--sans); font-size: 11.5px; line-height: 1.45;
   color: var(--ink-mid); margin-top: 8px;
   border-top: 1px solid var(--hairline); padding-top: 6px;
 }
-.cc-tip-meaning + .cc-tip-pos { margin-top: 10px; }
+.tip-meaning + .tip-pos { margin-top: 10px; }
+
+/* Narrow screens: plates are ~140px wide in the two-column layout, so a
+   centred 250px panel would hang off the left edge. Let it span the
+   plate instead. Touch devices rarely reach it (no hover), but keyboard
+   focus can, and it must not land off-screen when it does. */
+@media (max-width: 640px) {
+  .plate .tip { left: 0; right: 0; width: auto; transform: none; }
+}
 
 /* ---------- interpretation essay ---------- */
 .essay { max-width: 62ch; }
