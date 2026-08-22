@@ -30,7 +30,7 @@ SPREADS: dict[str, Spread] = {
         Spread(
             key="one_card",
             title="One Card",
-            tagline="A single insight — thirty seconds",
+            tagline="A single insight",
             positions=[
                 Position(
                     position=1,
@@ -46,7 +46,7 @@ SPREADS: dict[str, Spread] = {
         Spread(
             key="three_card",
             title="Three Cards",
-            tagline="Past, present, future — two minutes",
+            tagline="Past, present, future",
             positions=[
                 Position(
                     position=1,
@@ -77,7 +77,7 @@ SPREADS: dict[str, Spread] = {
         Spread(
             key="celtic_cross",
             title="Celtic Cross",
-            tagline="The full ten-card examination — five minutes",
+            tagline="The full ten-card examination",
             positions=[
                 Position(
                     position=1,

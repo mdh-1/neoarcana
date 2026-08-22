@@ -63,7 +63,8 @@ def test_configured_footer_and_faq_claim_random_org(client, with_key):
     assert "random.org" in client.get("/").text
     faq = client.get("/faq").text
     assert "atmospheric noise" in faq and "random.org" in faq
-    assert "every reading states which one it got" in faq
+    # the fallback must be disclosed; wording is free to change
+    assert "falls back" in faq
 
 
 def test_reading_page_reflects_actual_source_not_configuration(client):

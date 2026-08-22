@@ -110,4 +110,4 @@ Caddy, no build step; `git push production main` deploys via a
 and the rate limiter are in process memory) and keep `--proxy-headers` on
 (so the rate limiter sees real client IPs rather than Caddy's).
 
-Offered for reflection, not prediction.
+Offered for reflection.
