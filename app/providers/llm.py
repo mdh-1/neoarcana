@@ -89,7 +89,7 @@ async def _stream_openai_compat(
 _MOCK_TEXT = (
     "**A note from the development deck.** No LLM API key is configured, so "
     "this interpretation is a stand-in streamed by the mock provider.\n\n"
-    "Each card above still shows its traditional meaning — the draw itself "
+    "Each card above still shows its traditional meaning. The draw itself "
     "is real and used true randomness where available.\n\n"
     "**The thread.** Add a DeepSeek, Gemini or Mistral key to `.env` and this "
     "space will hold a genuine reading, streamed card by card."

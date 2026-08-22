@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Your reading — Neoarcana{% endblock %}
+{% block title %}Your reading · Neoarcana{% endblock %}
 {% block content %}
 {% set roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X"] %}
 <section class="reading">
@@ -9,7 +9,7 @@
   {% if reading.question %}
   <p class="question">&ldquo;{{ reading.question }}&rdquo;</p>
   {% else %}
-  <p class="question quiet-question">A general reading — no question asked.</p>
+  <p class="question quiet-question">A general reading. No question asked.</p>
   {% endif %}
 
   {% macro cc_card(c) %}
@@ -55,7 +55,7 @@
     <div class="pos-row">
       <span class="no">{{ "%02d"|format(c.position) }}</span>
       <div>
-        <strong>{{ c.position_name }}</strong> — {{ c.display_name }}
+        <strong>{{ c.position_name }}</strong> · {{ c.display_name }}
         <p>{{ c.meaning }}</p>
         <details>
           <summary>This position</summary>

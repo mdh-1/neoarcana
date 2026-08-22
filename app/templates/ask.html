@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% block title %}{{ spread.title }} — Neoarcana{% endblock %}
+{% block title %}{{ spread.title }} · Neoarcana{% endblock %}
 {% block content %}
 <header class="hero hero-small">
   <div class="kicker">{{ spread.title }}</div>
   <h1>What would you ask?</h1>
   <p class="standfirst">{{ spread.tagline }}. A question sharpens the reading,
-  but silence is also an answer — leave it blank for a general draw.</p>
+  but silence is also an answer. Leave it blank for a general draw.</p>
 </header>
 
 <form class="ask" method="post" action="/readings">
   <input type="hidden" name="spread_key" value="{{ spread.key }}">
-  <label class="kicker" for="question">Your question — optional</label>
+  <label class="kicker" for="question">Your question (optional)</label>
   <input id="question" name="question" type="text" maxlength="500"
          placeholder="Should I take the new role?" autofocus autocomplete="off">
   <div class="ask-actions">

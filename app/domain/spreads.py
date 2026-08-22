@@ -52,7 +52,7 @@ SPREADS: dict[str, Spread] = {
                     position=1,
                     name="Past",
                     description=(
-                        "The past influences that have led to the current situation — "
+                        "The past influences that have led to the current situation, and "
                         "what has shaped your current circumstances."
                     ),
                 ),
@@ -68,7 +68,7 @@ SPREADS: dict[str, Spread] = {
                     position=3,
                     name="Future",
                     description=(
-                        "The potential outcome based on the current path — what to "
+                        "The potential outcome based on the current path, and what to "
                         "expect if the current course is continued."
                     ),
                 ),
@@ -91,7 +91,7 @@ SPREADS: dict[str, Spread] = {
                     position=2,
                     name="The Challenge",
                     description=(
-                        "The immediate challenge or problem — the one thing that, if "
+                        "The immediate challenge or problem: the one thing that, if "
                         "resolved, would make life a lot easier. Even a 'positive' card "
                         "here still represents a challenge."
                     ),
@@ -108,7 +108,7 @@ SPREADS: dict[str, Spread] = {
                     position=4,
                     name="The Future",
                     description=(
-                        "What is likely to occur within the next few weeks or months — "
+                        "What is likely to occur within the next few weeks or months. "
                         "not the final outcome, simply the next step on the journey."
                     ),
                 ),
@@ -117,7 +117,7 @@ SPREADS: dict[str, Spread] = {
                     name="Above",
                     description=(
                         "Your goal, aspiration or best outcome with regard to the "
-                        "situation — what you are consciously working towards."
+                        "situation: what you are consciously working towards."
                     ),
                 ),
                 Position(
@@ -157,7 +157,7 @@ SPREADS: dict[str, Spread] = {
                     name="Outcome",
                     description=(
                         "Where the situation is headed if the current course is "
-                        "continued — and it remains within your free will to change it."
+                        "continued. It remains within your free will to change it."
                     ),
                 ),
             ],
