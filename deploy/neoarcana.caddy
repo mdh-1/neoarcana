@@ -72,8 +72,15 @@ www.neoarcana.net {
 	}
 
 	# REQUIRES /var/log/caddy owned by the caddy user. `caddy validate` will
-	# NOT catch its absence: validate parses config but does not open log
+	# NOT catch a problem here: validate parses config but does not open log
 	# sinks, so the failure appears only at reload.
+	#
+	# Subtler trap, hit once already: running validate or reload as root can
+	# create the log file owned by root:root, after which the caddy user
+	# cannot open it and every reload fails with "permission denied" even
+	# though the DIRECTORY is correct. Caddy keeps serving the previous
+	# config, so the site stays up and the breakage is silent until the next
+	# restart. Fix: chown caddy:caddy /var/log/caddy/neoarcana-access.log
 	log {
 		output file /var/log/caddy/neoarcana-access.log {
 			roll_size 10MiB
