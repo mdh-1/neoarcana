@@ -6,18 +6,34 @@ Assumes `/srv/neoarcana` as the app root and a `neoarcana` service user —
 adjust both consistently in `neoarcana.service` and `Caddyfile` if you
 prefer somewhere else.
 
-## Two constraints that are not negotiable
-
-**One worker.** Readings and the per-IP rate limiter live in process
-memory. A second worker will not see readings the first one created, so
-users get "this reading has drifted beyond recall" immediately after
-drawing. `--workers 1` until `ReadingStore` moves to SQLite.
+## Two things to get right
 
 **Proxy headers on.** Behind Caddy every request arrives from 127.0.0.1.
 Without `--proxy-headers`, the rate limiter treats the whole internet as
 one visitor and the 11th reading of the hour is refused for everyone.
+Verified: twelve distinct forwarded IPs all pass; one repeated IP is cut
+off at exactly ten.
+
+**One worker, by preference.** Readings live in SQLite, so workers do
+share them (measured: 60/60 concurrent fetches across three workers
+succeed, where 44 of 60 used to 404 with the in-memory store). But the
+per-IP rate limiter is still process-local, so N workers means N x
+`READINGS_PER_HOUR` before anyone is throttled — and one async worker
+handles this traffic comfortably.
 
 Both are already set in `neoarcana.service`.
+
+## State
+
+The reading database lives at `/var/lib/neoarcana/readings.db`, created
+by systemd's `StateDirectory` (the app directory itself is read-only
+under `ProtectSystem=strict`). It holds the draw — card numbers and
+orientations — plus the question and interpretation; the deck and spread
+definitions are static, so a reading read back from disk rehydrates
+through the same code path that created it.
+
+Nothing else is stateful. Back it up with `sqlite3 ... .backup`, or
+don't: losing it costs old permalinks, nothing more.
 
 ## Retiring the old service
 
@@ -117,9 +133,9 @@ sudo -u neoarcana /srv/neoarcana/.venv/bin/pip install -r /srv/neoarcana/require
 sudo systemctl restart neoarcana
 ```
 
-Restarting drops in-flight readings and the reading store — permalinks
-from before the restart 404. Fine for a hobby deploy; the fix when it
-starts to matter is SQLite behind `ReadingStore`.
+Restarting drops only in-flight generations; permalinks survive, since
+readings are on disk. A reading interrupted mid-stream is regenerated on
+the next visit to its page.
 
 ## Rollback
 

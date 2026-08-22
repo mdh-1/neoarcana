@@ -1,22 +1,25 @@
 """Reading lifecycle: draw, store, interpret.
 
-Readings live in a bounded in-memory store keyed by URL-safe ids, which
-gives us permalinks, refresh-survival and re-draw-on-demand — the legacy
-SPA cached readings per question, so asking the same question twice
-returned the same cards forever.
+Readings are keyed by URL-safe ids and persisted to SQLite, so permalinks
+survive refreshes, restarts and deploys — the legacy SPA cached readings
+per question, so asking the same question twice returned the same cards
+forever, and nothing outlived a page reload.
 """
 
+import asyncio
+import json
 import logging
 import secrets
+import sqlite3
 import threading
 import time
 from collections import OrderedDict
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 
-from ..config import Settings
+from ..config import Settings, get_settings
 from ..domain.deck import DrawnCard, assemble_spread
-from ..domain.spreads import Spread
+from ..domain.spreads import SPREADS, Spread
 from ..providers.entropy import draw_entropy
 from ..providers.llm import stream_interpretation
 
@@ -62,24 +65,144 @@ class Reading:
     status: str = "pending"  # pending | streaming | complete | error
 
 
-class ReadingStore:
-    """Bounded LRU of recent readings. SQLite can slot in behind this
-    interface when permalinks need to survive restarts."""
+_SCHEMA = """
+CREATE TABLE IF NOT EXISTS readings (
+    id              TEXT PRIMARY KEY,
+    spread_key      TEXT NOT NULL,
+    question        TEXT NOT NULL,
+    indices         TEXT NOT NULL,   -- JSON array of card numbers 0..77
+    reversals       TEXT NOT NULL,   -- JSON array of 0/1, parallel to indices
+    entropy_source  TEXT NOT NULL,
+    language_hint   TEXT NOT NULL,
+    created         REAL NOT NULL,
+    interpretation  TEXT NOT NULL,
+    status          TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS readings_created ON readings(created);
+"""
 
-    def __init__(self, max_size: int = 500):
-        self._max = max_size
+
+class ReadingStore:
+    """SQLite-backed store for readings.
+
+    Only the draw is persisted — card numbers and orientations — because
+    the deck and the spreads are static data. Rehydration runs the same
+    `assemble_spread` the original draw did, so a reading read back from
+    disk is byte-identical to the one that was written.
+
+    Live Reading objects are also kept in a small in-memory cache: the
+    interpretation is mutated in place as it streams, and concurrent
+    readers of one reading must see the same object.
+    """
+
+    _CACHE_SIZE = 256
+
+    def __init__(self) -> None:
         self._lock = threading.Lock()
-        self._readings: OrderedDict[str, Reading] = OrderedDict()
+        self._conn: sqlite3.Connection | None = None
+        self._cache: OrderedDict[str, Reading] = OrderedDict()
+
+    # -- connection ----------------------------------------------------
+
+    def _db(self) -> sqlite3.Connection:
+        """Opened lazily so the path comes from settings at first use,
+        which keeps tests free to point it at a temporary file."""
+        if self._conn is None:
+            path = get_settings().readings_db
+            path.parent.mkdir(parents=True, exist_ok=True)
+            conn = sqlite3.connect(path, check_same_thread=False)
+            conn.row_factory = sqlite3.Row
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.executescript(_SCHEMA)
+            conn.commit()
+            self._conn = conn
+        return self._conn
+
+    def reset(self) -> None:
+        """Drop the connection and cache (tests; not used in the app)."""
+        with self._lock:
+            if self._conn is not None:
+                self._conn.close()
+                self._conn = None
+            self._cache.clear()
+
+    # -- reads and writes ----------------------------------------------
 
     def put(self, reading: Reading) -> None:
         with self._lock:
-            self._readings[reading.id] = reading
-            while len(self._readings) > self._max:
-                self._readings.popitem(last=False)
+            db = self._db()
+            db.execute(
+                "INSERT OR REPLACE INTO readings VALUES (?,?,?,?,?,?,?,?,?,?)",
+                (
+                    reading.id,
+                    reading.spread.key,
+                    reading.question,
+                    json.dumps([c.card.number for c in reading.cards]),
+                    json.dumps([int(c.is_reversed) for c in reading.cards]),
+                    reading.entropy_source,
+                    reading.language_hint,
+                    reading.created,
+                    reading.interpretation,
+                    reading.status,
+                ),
+            )
+            db.execute(
+                "DELETE FROM readings WHERE id NOT IN "
+                "(SELECT id FROM readings ORDER BY created DESC LIMIT ?)",
+                (get_settings().reading_store_size,),
+            )
+            db.commit()
+            self._remember(reading)
+
+    def save_interpretation(self, reading: Reading) -> None:
+        """Write the finished (or failed) interpretation back to disk."""
+        with self._lock:
+            db = self._db()
+            db.execute(
+                "UPDATE readings SET interpretation = ?, status = ? WHERE id = ?",
+                (reading.interpretation, reading.status, reading.id),
+            )
+            db.commit()
 
     def get(self, reading_id: str) -> Reading | None:
         with self._lock:
-            return self._readings.get(reading_id)
+            cached = self._cache.get(reading_id)
+            if cached is not None:
+                self._cache.move_to_end(reading_id)
+                return cached
+            row = self._db().execute(
+                "SELECT * FROM readings WHERE id = ?", (reading_id,)
+            ).fetchone()
+            if row is None:
+                return None
+            reading = _reading_from_row(row)
+            self._remember(reading)
+            return reading
+
+    def _remember(self, reading: Reading) -> None:
+        self._cache[reading.id] = reading
+        self._cache.move_to_end(reading.id)
+        while len(self._cache) > self._CACHE_SIZE:
+            self._cache.popitem(last=False)
+
+
+def _reading_from_row(row: sqlite3.Row) -> Reading:
+    spread = SPREADS[row["spread_key"]]
+    return Reading(
+        id=row["id"],
+        spread=spread,
+        question=row["question"],
+        cards=assemble_spread(
+            spread,
+            json.loads(row["indices"]),
+            [bool(b) for b in json.loads(row["reversals"])],
+        ),
+        entropy_source=row["entropy_source"],
+        language_hint=row["language_hint"],
+        created=row["created"],
+        interpretation=row["interpretation"],
+        status=row["status"],
+    )
 
 
 store = ReadingStore()
@@ -126,28 +249,47 @@ def _user_prompt(reading: Reading) -> str:
     return "\n".join(lines)
 
 
+# One generation at a time per reading. Without this, refreshing the page
+# mid-stream starts a second generation that appends to the partial text
+# already on the reading, and the permalink is left holding both.
+_generating: dict[str, asyncio.Lock] = {}
+
+
 async def interpret(settings: Settings, reading: Reading) -> AsyncIterator[str]:
-    """Stream the interpretation, accumulating it onto the reading so
-    later visits to the permalink see the finished text."""
+    """Stream the interpretation, accumulating it onto the reading and
+    persisting it so later visits to the permalink see the finished text."""
     if reading.status == "complete":
         yield reading.interpretation
         return
 
-    reading.status = "streaming"
-    try:
-        async for chunk in stream_interpretation(
-            settings, SYSTEM_PROMPT, _user_prompt(reading)
-        ):
-            reading.interpretation += chunk
-            yield chunk
-        reading.status = "complete"
-    except Exception:
-        logging.getLogger(__name__).exception(
-            "all providers failed for reading %s", reading.id
-        )
-        reading.status = "error"
-        yield (
-            "\n\n**The cards were drawn, but the interpreter is unavailable "
-            "right now.** The traditional meanings above still stand — or "
-            "try again in a little while."
-        )
+    lock = _generating.setdefault(reading.id, asyncio.Lock())
+    async with lock:
+        # Someone else may have finished it while we waited for the lock.
+        if reading.status == "complete":
+            yield reading.interpretation
+            return
+
+        reading.interpretation = ""  # discard any partial from an abandoned attempt
+        reading.status = "streaming"
+        try:
+            async for chunk in stream_interpretation(
+                settings, SYSTEM_PROMPT, _user_prompt(reading)
+            ):
+                reading.interpretation += chunk
+                yield chunk
+            reading.status = "complete"
+        except Exception:
+            logging.getLogger(__name__).exception(
+                "all providers failed for reading %s", reading.id
+            )
+            reading.status = "error"
+            yield (
+                "\n\n**The cards were drawn, but the interpreter is unavailable "
+                "right now.** The traditional meanings above still stand — or "
+                "try again in a little while."
+            )
+        finally:
+            store.save_interpretation(reading)
+            # Worst case a concurrent waiter re-generates once; cheaper than
+            # growing a lock per reading for the life of the process.
+            _generating.pop(reading.id, None)

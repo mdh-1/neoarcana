@@ -11,10 +11,16 @@ Group=neoarcana
 WorkingDirectory=/srv/neoarcana
 Environment=PYTHONDONTWRITEBYTECODE=1
 
-# --workers 1 is REQUIRED, not a performance choice. Readings and the
-# per-IP rate limiter live in process memory, so a second worker would
-# serve "this reading has drifted beyond recall" for any reading it
-# didn't create. Revisit only after ReadingStore moves to SQLite.
+# ProtectSystem=strict makes the app directory read-only, so the reading
+# database lives in the state directory (/var/lib/neoarcana) instead.
+StateDirectory=neoarcana
+Environment=READINGS_DB=/var/lib/neoarcana/readings.db
+
+# --workers 1 is the right default rather than a hard requirement now
+# that readings are in SQLite (verified: 60/60 concurrent fetches across
+# 3 workers succeed, where 44 of 60 used to 404). One async worker is
+# ample here, and the per-IP rate limiter is still process-local — N
+# workers would mean N x READINGS_PER_HOUR before anyone is throttled.
 #
 # --proxy-headers + --forwarded-allow-ips lets the rate limiter see the
 # real client IP from Caddy's X-Forwarded-For. Without it every request

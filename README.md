@@ -93,9 +93,10 @@ Design notes:
 - **The deck is data, not code.** `data/cards.json` is validated by a
   Pydantic schema at startup; a malformed entry fails the boot, not a
   rendering three weeks later.
-- **Readings are in-memory** (bounded LRU, most recent 500). Permalinks
-  survive refresh but not a restart; SQLite can slot in behind
-  `ReadingStore` without touching anything else.
+- **Readings persist to SQLite** (`data/readings.db`, newest 5000).
+  Permalinks survive restarts and deploys. Only the draw is stored —
+  card numbers and orientations — because the deck and spreads are
+  static, so rehydration replays the same assembly the draw used.
 - **Rate limiting** is per-IP (default 10 readings/hour,
   `READINGS_PER_HOUR` in `.env`) because each reading spends LLM credit.
 - **No build step, on purpose.** The stylesheet is plain modern CSS with

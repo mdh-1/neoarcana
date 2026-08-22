@@ -32,7 +32,11 @@ class Settings(BaseSettings):
     mistral_model: str = "mistral-small-latest"
 
     readings_per_hour: int = 10  # per client IP
-    reading_store_size: int = 500
+
+    # Readings persist here so permalinks survive restarts and deploys.
+    # Under systemd this points at the StateDirectory; see deploy/.
+    readings_db: Path = DATA_DIR / "readings.db"
+    reading_store_size: int = 5000  # oldest rows pruned beyond this
 
 
 @lru_cache
