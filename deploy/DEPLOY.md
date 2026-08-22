@@ -53,9 +53,12 @@ sudo systemctl stop  old-tarot.service
 sudo systemctl disable old-tarot.service
 ```
 
-The old Caddy site also served the React build as static files and
-proxied only `/reading`. Replacing the site block with this one retires
-both halves at once. The old JSON endpoint (`POST /reading`) disappears;
+The old Caddy site served the React build from
+`/var/lib/caddy/celtic-cross-journey/dist` and proxied only `/reading` to
+the legacy API. Replacing the `# ---- Neoarcana ----` block with the one
+in `deploy/Caddyfile` retires both halves at once; the old `dist`
+directory is then orphaned and can be deleted once the new site is
+confirmed working. The old JSON endpoint (`POST /reading`) disappears;
 the new equivalent is `POST /readings` plus `GET /api/v1/readings/{id}`.
 
 ## First deploy

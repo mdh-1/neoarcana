@@ -1,12 +1,19 @@
-# Neoarcana — Caddy site config.
-# Caddy handles TLS (Let's Encrypt) and SSE flushing on its own, so this
-# stays short. Copy into /etc/caddy/Caddyfile or import it from there.
+# Neoarcana — replaces the existing "# ---- Neoarcana ----" block in
+# /etc/caddy/Caddyfile. Keeps www canonical, as the current config has it.
+#
+# What this replaces: the old block served the React SPA from
+# /var/lib/caddy/celtic-cross-journey/dist and proxied only /reading to
+# the legacy API on :8001. The new app serves its own pages, so the
+# static root and the single-endpoint proxy both go away.
 
-neoarcana.net, www.neoarcana.net {
+neoarcana.net {
+	redir https://www.{host}{uri}
+}
 
-	# Card images straight from disk. The app runs a single worker
-	# (see neoarcana.service), so keeping 10 image requests per reading
-	# off it leaves it free to stream interpretations.
+www.neoarcana.net {
+	# Card images straight from disk. The app runs a single worker, so
+	# keeping ~10 image requests per reading off it leaves it free to
+	# stream interpretations.
 	handle_path /static/* {
 		root * /srv/neoarcana/app/static
 		header Cache-Control "public, max-age=2592000, immutable"
