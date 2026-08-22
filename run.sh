@@ -6,10 +6,12 @@ cd "$(dirname "$0")"
 PYTHON="${PYTHON:-python3}"
 PORT="${PORT:-8001}"
 
-# A virtualenv bakes absolute paths into its scripts, so moving or
-# renaming the project directory leaves .venv/bin/* present but broken.
-# Check that it actually runs, not just that it exists.
-if [ ! -x .venv/bin/uvicorn ] || ! .venv/bin/python -c "" 2>/dev/null; then
+# A virtualenv bakes absolute paths into its console scripts, so moving
+# or renaming the project directory leaves .venv/bin/uvicorn present but
+# broken ("bad interpreter"). Test the script itself — .venv/bin/python
+# is a symlink to the system interpreter and works from anywhere, so it
+# proves nothing.
+if ! .venv/bin/uvicorn --version >/dev/null 2>&1; then
   [ -e .venv ] && echo "Virtualenv is stale (project moved?) — rebuilding..." && rm -rf .venv
   echo "Creating virtualenv and installing dependencies..."
   "$PYTHON" -m venv .venv
