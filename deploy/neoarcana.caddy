@@ -1,0 +1,86 @@
+# neoarcana.caddy — ONE SITE BLOCK for the shared Caddy instance.
+#
+# Like amozgrada.caddy, this is deliberately NOT a complete Caddyfile: the
+# box also serves apartmentmaja.com from /etc/caddy/Caddyfile, and dropping a
+# whole Caddyfile in would delete it. This file is imported instead, so a
+# deploy can never touch another site's config.
+#
+# Per deploy (deploy.sh warns when the installed copy differs):
+#     sudo cp deploy/neoarcana.caddy /etc/caddy/sites/neoarcana.caddy
+#     caddy validate --config /etc/caddy/Caddyfile   # validates ALL sites
+#     sudo systemctl reload caddy                    # no downtime
+#
+# TLS is automatic (Let's Encrypt); A records for apex and www already exist.
+# No TLS configuration belongs here.
+#
+# PORT 8001 is not arbitrary: 8002 is amozgrada's. It must match --port in
+# neoarcana.service. Two apps sharing a port means whichever binds second
+# dies, or traffic crosses between sites.
+
+# www-canonical, matching the other sites on this box. `permanent` (301)
+# rather than Caddy's default 302: a canonical host is a permanent fact.
+neoarcana.net {
+	redir https://www.{host}{uri} permanent
+}
+
+www.neoarcana.net {
+	# Card images from disk. Unlike amozgrada (a pure proxy), Caddy does
+	# serve files here: the app runs a single worker, so keeping ~10 image
+	# requests per reading off it leaves it free to stream interpretations.
+	# Requires Caddy read access to /srv/neoarcana/app/static.
+	handle_path /static/* {
+		root * /srv/neoarcana/app/static
+		header Cache-Control "public, max-age=2592000, immutable"
+		file_server
+	}
+
+	# The interpretation stream, kept out of the `encode` block below.
+	# Caddy flushes text/event-stream immediately on its own; compression
+	# middleware is the one thing that can get in the way of that.
+	@stream path_regexp ^/readings/[^/]+/stream$
+	handle @stream {
+		reverse_proxy 127.0.0.1:8001
+	}
+
+	# Everything else. The only POST is the reading form, which carries a
+	# question of at most 500 characters, so 1 MB is already generous and
+	# keeps a stray huge POST off the app.
+	handle {
+		encode zstd gzip
+		request_body {
+			max_size 1MB
+		}
+		reverse_proxy 127.0.0.1:8001
+	}
+
+	# An app outage would otherwise show Caddy's bare 502. Plain text on
+	# purpose: no disk access needed, no syntax that could fail validation.
+	# 404s come from the app as normal responses and never land here.
+	handle_errors {
+		respond "Neoarcana is briefly unavailable. Please try again in a minute or two. (error {err.status_code})"
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# Every asset is same-origin: one external stylesheet, one external
+		# script, card images from /static. Nothing is inlined, so this
+		# needs no 'unsafe-inline' — keep it that way.
+		Content-Security-Policy "default-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'"
+		-Server
+	}
+
+	# REQUIRES /var/log/caddy owned by the caddy user. `caddy validate` will
+	# NOT catch its absence: validate parses config but does not open log
+	# sinks, so the failure appears only at reload.
+	log {
+		output file /var/log/caddy/neoarcana-access.log {
+			roll_size 10MiB
+			roll_keep 5
+			# 14 days: an IP address is personal data (GDPR). Short
+			# retention under legitimate interest (security).
+			roll_keep_for 336h
+		}
+	}
+}

@@ -105,8 +105,8 @@ Design notes:
 ## Deploying
 
 See [deploy/DEPLOY.md](deploy/DEPLOY.md) — single uvicorn process behind
-Caddy, no build step. `./deploy/deploy.sh` tests, pushes and then
-smoke-tests the live site; a `post-receive` hook does the server half. Two constraints matter: run **one worker** (readings
+Caddy, no build step. `git push`, then `sudo /srv/neoarcana/deploy/deploy.sh`
+on the server: it pulls, tests, restarts and smoke-tests the live site. Two constraints matter: run **one worker** (readings
 and the rate limiter are in process memory) and keep `--proxy-headers` on
 (so the rate limiter sees real client IPs rather than Caddy's).
 

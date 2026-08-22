@@ -69,17 +69,8 @@ sudo useradd --system --home /srv/neoarcana --shell /usr/sbin/nologin neoarcana
 sudo mkdir -p /srv/neoarcana
 sudo chown neoarcana:neoarcana /srv/neoarcana
 
-# 2. Bare repo and deploy hook (same pattern as apt-maja on this box).
-#    The hook lands in step 5, once the service exists to restart.
-sudo mkdir -p /srv/git/neoarcana.git
-sudo git init --bare /srv/git/neoarcana.git
-
-#    From your laptop:
-git remote add production ssh://root@neoarcana.net/srv/git/neoarcana.git
-git push production main        # populates the bare repo; hook not yet live
-
-#    On the server, do the first checkout by hand:
-sudo git --git-dir=/srv/git/neoarcana.git --work-tree=/srv/neoarcana checkout -f main
+# 2. Clone from GitHub (public repo, so no deploy key is needed)
+sudo git clone https://github.com/mdh-1/neoarcana.git /srv/neoarcana
 sudo chown -R neoarcana:neoarcana /srv/neoarcana
 
 # 3. Virtualenv on the server
@@ -101,14 +92,14 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now neoarcana
 systemctl status neoarcana
 
-# 5b. Deploy hook — from here on, `git push production main` deploys
-sudo cp /srv/neoarcana/deploy/post-receive /srv/git/neoarcana.git/hooks/
-sudo chmod +x /srv/git/neoarcana.git/hooks/post-receive
+# 5b. Caddy site file (imported by /etc/caddy/Caddyfile via `import sites/*.caddy`)
+sudo install -d /etc/caddy/sites
+sudo cp /srv/neoarcana/deploy/neoarcana.caddy /etc/caddy/sites/
+sudo install -d -o caddy -g caddy /var/log/caddy   # the log block needs this
+sudo caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload caddy
 
 # 6. Caddy
-sudo cp /srv/neoarcana/deploy/Caddyfile /etc/caddy/Caddyfile   # or import it
-sudo caddy validate --config /etc/caddy/Caddyfile
-sudo systemctl reload caddy
+# (Caddy is handled in 5b above)
 ```
 
 ## Verify
@@ -134,34 +125,30 @@ Watch the first live reading stream in real time with
 
 ## Updating
 
+From your laptop:
+
 ```sh
-./deploy/deploy.sh
+git push          # to GitHub
 ```
 
-Runs the test suite, pushes to GitHub and to the server, then verifies
-the live site: health, the apex redirect, the home page, static assets
-served by Caddy, and a full end-to-end reading. `--smoke` checks what is
-already live without deploying; `--no-reading` skips the model call.
+Then on the server:
 
-The bare `git push production main` still works and still triggers the
-hook; the script adds the local gate and the post-deploy verification.
-
-The `post-receive` hook checks out the tree, updates dependencies,
-restarts the service, and curls `/health`. A failed health check exits
-non-zero, so the push itself reports the failure:
-
-```
---> deploying a1b2c3d
---> healthy
+```sh
+sudo /srv/neoarcana/deploy/deploy.sh
 ```
 
-Untracked files are left alone by the checkout, so `.env`, `.venv/` and
-`archive/` survive every deploy. The reading database lives outside the
-app directory entirely.
+Pull-based, matching amozgrada on the same box. The script pulls, syncs
+dependencies, **runs the test suite before touching the running service**,
+restarts, health-checks on localhost, then smoke-tests the public site:
+apex redirect, home page, static assets served by Caddy, security
+headers, and a full end-to-end reading.
 
-Restarting drops only in-flight generations; permalinks survive, since
-readings are on disk. A reading interrupted mid-stream is regenerated on
-the next visit to its page.
+`--smoke` verifies the live site and changes nothing. `--no-test` skips
+the suite, which defeats the point of the gate.
+
+It warns (rather than acts) when `deploy/neoarcana.caddy` or
+`deploy/neoarcana.service` differ from their installed copies, since
+changing either is a deliberate root action.
 
 ## Rollback
 
