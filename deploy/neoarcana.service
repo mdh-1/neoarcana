@@ -1,0 +1,41 @@
+# /etc/systemd/system/neoarcana.service
+[Unit]
+Description=Neoarcana tarot reading service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=neoarcana
+Group=neoarcana
+WorkingDirectory=/srv/neoarcana
+Environment=PYTHONDONTWRITEBYTECODE=1
+
+# --workers 1 is REQUIRED, not a performance choice. Readings and the
+# per-IP rate limiter live in process memory, so a second worker would
+# serve "this reading has drifted beyond recall" for any reading it
+# didn't create. Revisit only after ReadingStore moves to SQLite.
+#
+# --proxy-headers + --forwarded-allow-ips lets the rate limiter see the
+# real client IP from Caddy's X-Forwarded-For. Without it every request
+# looks like 127.0.0.1 and the 11th reading site-wide gets a 429.
+ExecStart=/srv/neoarcana/.venv/bin/uvicorn app.main:app \
+    --host 127.0.0.1 --port 8001 \
+    --workers 1 \
+    --proxy-headers --forwarded-allow-ips=127.0.0.1
+
+Restart=on-failure
+RestartSec=5s
+
+# Hardening: the app reads its own directory and talks to the network.
+# It writes nothing to disk — readings are in memory, logs go to journald.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

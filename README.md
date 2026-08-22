@@ -70,6 +70,7 @@ app/
 └── static/              # style.css, reading.js, 640px card images
 data/cards.json          # all 78 cards, schema-validated at startup
 tests/                   # offline-friendly; no keys, no network
+deploy/                  # Caddyfile, systemd unit, runbook
 archive/                 # full-res source scans (untracked; site serves 640px)
 ```
 
@@ -99,5 +100,12 @@ Design notes:
   `READINGS_PER_HOUR` in `.env`) because each reading spends LLM credit.
 - **No build step, on purpose.** The stylesheet is plain modern CSS with
   design tokens in `:root`; there is nothing to compile, watch or update.
+
+## Deploying
+
+See [deploy/DEPLOY.md](deploy/DEPLOY.md) — single uvicorn process behind
+Caddy, no build step. Two constraints matter: run **one worker** (readings
+and the rate limiter are in process memory) and keep `--proxy-headers` on
+(so the rate limiter sees real client IPs rather than Caddy's).
 
 Offered for reflection, not prediction.

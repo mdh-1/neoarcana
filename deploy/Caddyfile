@@ -1,0 +1,28 @@
+# Neoarcana — Caddy site config.
+# Caddy handles TLS (Let's Encrypt) and SSE flushing on its own, so this
+# stays short. Copy into /etc/caddy/Caddyfile or import it from there.
+
+neoarcana.net, www.neoarcana.net {
+
+	# Card images straight from disk. The app runs a single worker
+	# (see neoarcana.service), so keeping 10 image requests per reading
+	# off it leaves it free to stream interpretations.
+	handle_path /static/* {
+		root * /srv/neoarcana/app/static
+		header Cache-Control "public, max-age=2592000, immutable"
+		file_server
+	}
+
+	# The interpretation stream. Kept out of the `encode` block below:
+	# Caddy flushes text/event-stream immediately, and compression
+	# middleware is the one thing that can get in the way of that.
+	@stream path_regexp ^/readings/[^/]+/stream$
+	handle @stream {
+		reverse_proxy 127.0.0.1:8001
+	}
+
+	handle {
+		encode zstd gzip
+		reverse_proxy 127.0.0.1:8001
+	}
+}
