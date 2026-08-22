@@ -66,13 +66,17 @@ sudo useradd --system --home /srv/neoarcana --shell /usr/sbin/nologin neoarcana
 sudo mkdir -p /srv/neoarcana
 sudo chown neoarcana:neoarcana /srv/neoarcana
 
-# 2. Code (from your laptop). archive/ is 203MB of source scans and
-#    .venv is platform-specific — neither belongs on the server.
-rsync -av --delete \
-  --exclude '.git' --exclude '.venv' --exclude 'archive' \
-  --exclude '__pycache__' --exclude '.pytest_cache' --exclude '.env' \
-  ./ user@neoarcana.net:/tmp/neoarcana/
-sudo rsync -a --delete /tmp/neoarcana/ /srv/neoarcana/
+# 2. Bare repo and deploy hook (same pattern as apt-maja on this box).
+#    The hook lands in step 5, once the service exists to restart.
+sudo mkdir -p /srv/git/neoarcana.git
+sudo git init --bare /srv/git/neoarcana.git
+
+#    From your laptop:
+git remote add production ssh://root@neoarcana.net/srv/git/neoarcana.git
+git push production main        # populates the bare repo; hook not yet live
+
+#    On the server, do the first checkout by hand:
+sudo git --git-dir=/srv/git/neoarcana.git --work-tree=/srv/neoarcana checkout -f main
 sudo chown -R neoarcana:neoarcana /srv/neoarcana
 
 # 3. Virtualenv on the server
@@ -93,6 +97,10 @@ sudo cp /srv/neoarcana/deploy/neoarcana.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now neoarcana
 systemctl status neoarcana
+
+# 5b. Deploy hook — from here on, `git push production main` deploys
+sudo cp /srv/neoarcana/deploy/post-receive /srv/git/neoarcana.git/hooks/
+sudo chmod +x /srv/git/neoarcana.git/hooks/post-receive
 
 # 6. Caddy
 sudo cp /srv/neoarcana/deploy/Caddyfile /etc/caddy/Caddyfile   # or import it
@@ -124,14 +132,21 @@ Watch the first live reading stream in real time with
 ## Updating
 
 ```sh
-rsync -av --delete --exclude '.git' --exclude '.venv' --exclude 'archive' \
-  --exclude '__pycache__' --exclude '.pytest_cache' --exclude '.env' \
-  ./ user@neoarcana.net:/tmp/neoarcana/
-sudo rsync -a --delete /tmp/neoarcana/ /srv/neoarcana/
-sudo chown -R neoarcana:neoarcana /srv/neoarcana
-sudo -u neoarcana /srv/neoarcana/.venv/bin/pip install -r /srv/neoarcana/requirements.txt
-sudo systemctl restart neoarcana
+git push production main
 ```
+
+The `post-receive` hook checks out the tree, updates dependencies,
+restarts the service, and curls `/health`. A failed health check exits
+non-zero, so the push itself reports the failure:
+
+```
+--> deploying a1b2c3d
+--> healthy
+```
+
+Untracked files are left alone by the checkout, so `.env`, `.venv/` and
+`archive/` survive every deploy. The reading database lives outside the
+app directory entirely.
 
 Restarting drops only in-flight generations; permalinks survive, since
 readings are on disk. A reading interrupted mid-stream is regenerated on
@@ -139,9 +154,18 @@ the next visit to its page.
 
 ## Rollback
 
-`sudo systemctl stop neoarcana`, then bring the old service back up. The
-legacy code is in git history (`git log --all -- tarot-main/`), so keep a
-copy of the old tree on the server until you're happy with the new one.
+To the previous commit, on the server:
+
+```sh
+sudo git --git-dir=/srv/git/neoarcana.git --work-tree=/srv/neoarcana checkout -f <sha>
+sudo chown -R neoarcana:neoarcana /srv/neoarcana
+sudo systemctl restart neoarcana
+```
+
+Then fix forward on your laptop and push; the next push overwrites the
+rolled-back tree. To abandon the new app entirely, stop the service and
+bring the old one back — the originals also live on GitHub
+(`locran20/tarot` and `locran20/celtic-cross-journey`).
 
 ## Vendor changes
 

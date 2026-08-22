@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# /srv/git/neoarcana.git/hooks/post-receive   (chmod +x)
+#
+# Checks out the pushed tree into /srv/neoarcana, updates dependencies,
+# restarts the service and verifies it came back. A failed health check
+# exits non-zero, so `git push` reports the failure rather than leaving
+# you to discover it.
+set -euo pipefail
+
+# git sets these for the hook; they break the nested git calls below.
+unset GIT_DIR GIT_WORK_TREE
+
+REPO=/srv/git/neoarcana.git
+APP=/srv/neoarcana
+USER=neoarcana
+BRANCH=main
+PORT=8001
+
+while read -r _old new ref; do
+    [ "$ref" = "refs/heads/$BRANCH" ] || continue
+    echo "--> deploying $(git --git-dir="$REPO" rev-parse --short "$new")"
+
+    # Untracked files survive a forced checkout, so .env, .venv and
+    # archive/ are left alone. Files deleted in the commit are removed.
+    git --git-dir="$REPO" --work-tree="$APP" checkout -f "$BRANCH"
+    chown -R "$USER:$USER" "$APP"
+
+    if [ ! -x "$APP/.venv/bin/python" ]; then
+        echo "--> creating virtualenv"
+        sudo -u "$USER" python3 -m venv "$APP/.venv"
+    fi
+    sudo -u "$USER" "$APP/.venv/bin/pip" install --quiet -r "$APP/requirements.txt"
+
+    systemctl restart neoarcana
+
+    sleep 2
+    if curl -fsS --max-time 5 "http://127.0.0.1:$PORT/health" >/dev/null; then
+        echo "--> healthy"
+    else
+        echo "--> FAILED health check — journalctl -u neoarcana -n 50" >&2
+        exit 1
+    fi
+done
