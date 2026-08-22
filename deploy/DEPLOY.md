@@ -135,8 +135,16 @@ Watch the first live reading stream in real time with
 ## Updating
 
 ```sh
-git push production main
+./deploy/deploy.sh
 ```
+
+Runs the test suite, pushes to GitHub and to the server, then verifies
+the live site: health, the apex redirect, the home page, static assets
+served by Caddy, and a full end-to-end reading. `--smoke` checks what is
+already live without deploying; `--no-reading` skips the model call.
+
+The bare `git push production main` still works and still triggers the
+hook; the script adds the local gate and the post-deploy verification.
 
 The `post-receive` hook checks out the tree, updates dependencies,
 restarts the service, and curls `/health`. A failed health check exits
