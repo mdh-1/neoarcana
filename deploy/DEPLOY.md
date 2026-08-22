@@ -1,5 +1,10 @@
 # Deploying Neoarcana
 
+Same shape as amozgrada on this box (see its `docs/DEPLOY.md`): a clone
+in `/srv`, a systemd unit, a Caddy site file imported from
+`/etc/caddy/sites/`, and a root-run `deploy/deploy.sh` that pulls.
+apartmentmaja.com is static and has no service or script.
+
 Single FastAPI process behind Caddy. No build step, no container, no database.
 
 Assumes `/srv/neoarcana` as the app root and a `neoarcana` service user —
@@ -55,10 +60,10 @@ sudo systemctl disable old-tarot.service
 
 The old Caddy site served the React build from
 `/var/lib/caddy/celtic-cross-journey/dist` and proxied only `/reading` to
-the legacy API. Replacing the `# ---- Neoarcana ----` block with the one
-in `deploy/Caddyfile` retires both halves at once; the old `dist`
-directory is then orphaned and can be deleted once the new site is
-confirmed working. The old JSON endpoint (`POST /reading`) disappears;
+the legacy API. That block is gone: the site config now lives in
+`deploy/neoarcana.caddy`, installed to `/etc/caddy/sites/` and imported
+by `/etc/caddy/Caddyfile`, which is now just that one import line. The
+old `dist` directory is orphaned and can be deleted. The old JSON endpoint (`POST /reading`) disappears;
 the new equivalent is `POST /readings` plus `GET /api/v1/readings/{id}`.
 
 ## First deploy
@@ -77,7 +82,7 @@ sudo chown -R neoarcana:neoarcana /srv/neoarcana
 sudo -u neoarcana python3 -m venv /srv/neoarcana/.venv
 sudo -u neoarcana /srv/neoarcana/.venv/bin/pip install -r /srv/neoarcana/requirements.txt
 
-# 4. Secrets — never rsynced, never committed
+# 4. Secrets: never committed, never in the repo
 sudo -u neoarcana tee /srv/neoarcana/.env >/dev/null <<'ENV'
 GEMINI_API_KEY=...
 RANDOM_API_KEY=...   # the site's copy claims atmospheric noise only when this is set
@@ -155,8 +160,7 @@ changing either is a deliberate root action.
 To the previous commit, on the server:
 
 ```sh
-sudo git --git-dir=/srv/git/neoarcana.git --work-tree=/srv/neoarcana checkout -f <sha>
-sudo chown -R neoarcana:neoarcana /srv/neoarcana
+sudo -u neoarcana git -C /srv/neoarcana checkout -f <sha>
 sudo systemctl restart neoarcana
 ```
 
