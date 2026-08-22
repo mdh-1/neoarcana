@@ -17,7 +17,8 @@
     {% block content %}{% endblock %}
 
     <footer>
-      <span>Shuffled with true randomness · <a href="https://www.random.org" rel="noopener">random.org</a></span>
+      {% if random_org %}<span>Shuffled with atmospheric noise · <a href="https://www.random.org" rel="noopener">random.org</a></span>
+      {% else %}<span>Shuffled with cryptographic randomness</span>{% endif %}
       <span>Offered for reflection, not prediction</span>
     </footer>
   </div>

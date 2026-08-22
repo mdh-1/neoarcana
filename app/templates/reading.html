@@ -4,7 +4,8 @@
 {% set roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X"] %}
 <section class="reading">
   <div class="reading-kicker">Reading {{ reading.id }} · {{ reading.spread.title }}
-    {%- if reading.entropy_source == "random.org" %} · shuffled by atmospheric noise{% endif %}</div>
+    {%- if reading.entropy_source == "random.org" %} · shuffled by atmospheric noise
+    {%- else %} · shuffled by cryptographic randomness{% endif %}</div>
   {% if reading.question %}
   <p class="question">&ldquo;{{ reading.question }}&rdquo;</p>
   {% else %}

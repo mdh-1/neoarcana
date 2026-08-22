@@ -8,10 +8,18 @@
 
 <section class="essay faq-essay">
   <h2>How are the cards drawn?</h2>
-  <p>With true randomness. Each shuffle requests atmospheric-noise random
-  numbers from random.org — the same source used for lotteries and scientific
-  draws. If that service is unavailable, we fall back to your operating
-  system's cryptographic randomness, and the reading says so.</p>
+  {% if random_org %}
+  <p>With atmospheric noise. Each shuffle requests random numbers from
+  random.org, which derives them from radio noise in the atmosphere — the
+  same source used for lotteries and scientific draws. If that service is
+  unavailable, the shuffle falls back to the server's cryptographic random
+  number generator, and every reading states which one it got.</p>
+  {% else %}
+  <p>With the server's cryptographic random number generator — hardware-seeded
+  and the same kind that protects your bank login. Every reading states its
+  source; this one, unlike most tarot sites, would rather be plain than
+  mystical about it.</p>
+  {% endif %}
 
   <h2>Who writes the interpretation?</h2>
   <p>A language model, given your cards, their positions and your question.

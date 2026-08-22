@@ -86,7 +86,7 @@ sudo -u neoarcana /srv/neoarcana/.venv/bin/pip install -r /srv/neoarcana/require
 # 4. Secrets — never rsynced, never committed
 sudo -u neoarcana tee /srv/neoarcana/.env >/dev/null <<'ENV'
 GEMINI_API_KEY=...
-RANDOM_API_KEY=
+RANDOM_API_KEY=...   # the site's copy claims atmospheric noise only when this is set
 LLM_PROVIDERS=gemini,mistral,deepseek
 READINGS_PER_HOUR=10
 ENV

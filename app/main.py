@@ -38,6 +38,9 @@ def _rate_limited(ip: str, per_hour: int) -> bool:
 
 
 def _page(request: Request, name: str, status_code: int = 200, **ctx) -> HTMLResponse:
+    # Site copy about the shuffle must match the configuration, not the
+    # aspiration: without a random.org key every draw is local CSPRNG.
+    ctx.setdefault("random_org", bool(get_settings().random_api_key))
     return templates.TemplateResponse(request, name, ctx, status_code=status_code)
 
 

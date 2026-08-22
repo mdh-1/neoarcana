@@ -3,8 +3,9 @@
 <header class="hero">
   <div class="kicker">A tarot reading, plainly given</div>
   <h1>Seventy&#8209;eight cards. One honest answer.</h1>
-  <p class="standfirst">No candles, no costumes. A deck shuffled by atmospheric
-  noise, read closely, and set down in clear prose. Choose a spread to begin.</p>
+  <p class="standfirst">No candles, no costumes. A deck shuffled by
+  {% if random_org %}atmospheric noise{% else %}cryptographic randomness{% endif %},
+  read closely, and set down in clear prose. Choose a spread to begin.</p>
 </header>
 
 <section class="index">

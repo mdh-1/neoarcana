@@ -6,6 +6,7 @@ shuffled it so the UI can be honest about it — and quota exhaustion
 degrades gracefully instead of turning into a 500.
 """
 
+import logging
 import secrets
 
 import httpx
@@ -68,6 +69,9 @@ async def draw_entropy(n: int, random_api_key: str | None) -> EntropyResult:
             reversals=[bool(b) for b in bits],
             source="random.org",
         )
-    except Exception:
+    except Exception as exc:
         # Any failure — quota, network, schema — falls back to the OS CSPRNG.
+        # The reading records the source, so the fallback is honest; log it
+        # so that a quota exhausted at 3am is visible in the morning.
+        logging.getLogger(__name__).warning("random.org unavailable (%r); using local entropy", exc)
         return _local_draw(n)
