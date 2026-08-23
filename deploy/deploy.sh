@@ -147,11 +147,12 @@ grep -qi 'immutable'   <<<"$hdrs" || warn "card image not served by Caddy"
 ok "static assets"
 
 sec="$(curl -sI --max-time 20 "$SITE/")"
+missing=0
 for h in Strict-Transport-Security X-Content-Type-Options Content-Security-Policy; do
-  grep -qi "^$h:" <<<"$sec" || warn "missing header: $h"
+  grep -qi "^$h:" <<<"$sec" || { warn "missing header: $h"; missing=$((missing+1)); }
 done
-grep -qi '^server:' <<<"$sec" && warn "Server header still advertised"
-ok "security headers"
+grep -qi '^server:' <<<"$sec" && { warn "Server header still advertised"; missing=$((missing+1)); }
+[[ $missing -eq 0 ]] && ok "security headers" || warn "$missing header issue(s): install the Caddy site file (see above)"
 
 dashes=$(grep -o '—' <<<"$home" | wc -l | tr -d ' ') || dashes=0
 [[ "$dashes" -eq 0 ]] && ok "no em dashes in site copy" || warn "$dashes em dash(es) on the home page"
