@@ -74,6 +74,23 @@ templates.env.globals["site_url"] = get_settings().site_url.rstrip("/")
 load_deck()  # validate card data at startup, not first request
 
 
+@app.middleware("http")
+async def _answer_head_requests(request: Request, call_next):
+    """Answer HEAD wherever GET is answered.
+
+    FastAPI registers @app.get for GET alone, so HEAD fell through to a JSON
+    404 on every page, including /favicon.ico. Crawlers, uptime monitors and
+    link previewers all use HEAD, so they saw a broken site. Per RFC 9110 the
+    headers must match what GET would return, so the request is dispatched as
+    GET and the body dropped.
+    """
+    if request.method != "HEAD":
+        return await call_next(request)
+    request.scope["method"] = "GET"
+    response = await call_next(request)
+    return Response(status_code=response.status_code, headers=dict(response.headers))
+
+
 # --- tiny per-IP rate limit on reading creation (LLM calls cost money) ---
 _hits: dict[str, deque[float]] = defaultdict(deque)
 

@@ -85,3 +85,13 @@ def test_rate_limit_kicks_in(client):
 def test_no_unrendered_jinja(client):
     for path in ("/", "/ask/one_card", "/faq"):
         assert not re.search(r"{{|}}", client.get(path).text)
+
+
+@pytest.mark.parametrize("path", ["/", "/faq", "/health", "/favicon.ico", "/robots.txt", "/ask/one_card"])
+def test_head_is_answered_like_get(client, path):
+    """Crawlers and uptime monitors use HEAD; FastAPI's @app.get does not
+    register it, so every page used to return a JSON 404 to them."""
+    head, get = client.head(path), client.get(path)
+    assert head.status_code == get.status_code == 200, path
+    assert head.headers["content-type"] == get.headers["content-type"], path
+    assert head.content == b""
