@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-3.5-flash-lite"  # 2.5 is closed to new API users
     mistral_model: str = "mistral-small-latest"
 
+    # Canonical origin, used for <link rel=canonical>, og:url and the
+    # sitemap. www is canonical here (the apex 301s to it), matching the
+    # Caddy config.
+    site_url: str = "https://www.neoarcana.net"
+
     readings_per_hour: int = 10  # per client IP
 
     # Readings persist here so permalinks survive restarts and deploys.

@@ -6,7 +6,14 @@ from collections import defaultdict, deque
 from pathlib import Path
 
 from fastapi import FastAPI, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    PlainTextResponse,
+    RedirectResponse,
+    Response,
+    StreamingResponse,
+)
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from markupsafe import Markup, escape
@@ -62,6 +69,7 @@ def _interpretation_html(text: str) -> Markup:
 
 templates.env.filters["interpretation"] = _interpretation_html
 templates.env.globals["asset_v"] = _asset_version("style.css", "reading.js")
+templates.env.globals["site_url"] = get_settings().site_url.rstrip("/")
 
 load_deck()  # validate card data at startup, not first request
 
@@ -140,6 +148,38 @@ async def show_reading(request: Request, reading_id: str):
         return _page(request, "error.html", status_code=404,
                      message="This reading has drifted beyond recall. Draw a fresh one.")
     return _page(request, "reading.html", reading=r)
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    """Served from the root as well as /static: it is the path crawlers
+    request by default, and Google uses it for the search-result icon."""
+    return FileResponse(BASE_DIR / "static" / "favicon.ico")
+
+
+@app.get("/robots.txt", include_in_schema=False, response_class=PlainTextResponse)
+async def robots():
+    """Individual readings carry the querent's question, so they are kept
+    out of the index. The public pages are the ones worth crawling."""
+    return (
+        "User-agent: *\n"
+        "Disallow: /readings/\n"
+        "Disallow: /api/\n"
+        "Allow: /\n"
+        f"\nSitemap: {get_settings().site_url.rstrip('/')}/sitemap.xml\n"
+    )
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+async def sitemap():
+    base = get_settings().site_url.rstrip("/")
+    paths = ["/", "/faq"] + [f"/ask/{k}" for k in SPREADS]
+    urls = "".join(f"<url><loc>{base}{p}</loc></url>" for p in paths)
+    return Response(
+        f'<?xml version="1.0" encoding="UTF-8"?>'
+        f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>',
+        media_type="application/xml",
+    )
 
 
 @app.get("/faq", response_class=HTMLResponse)

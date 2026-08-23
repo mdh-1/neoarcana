@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_correspondences.html" import correspondences %}
+{% block head_extra %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block title %}Your reading · Neoarcana{% endblock %}
 {% block content %}
 {% set roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X"] %}

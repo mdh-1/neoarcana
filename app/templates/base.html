@@ -4,8 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Neoarcana · a tarot reading, plainly given{% endblock %}</title>
+  <meta name="description" content="{% block description %}A tarot reading, plainly given. A deck shuffled by {% if random_org %}atmospheric noise{% else %}cryptographic randomness{% endif %}, read closely, and set down in clear prose.{% endblock %}">
+  <link rel="canonical" href="{{ site_url }}{{ request.url.path }}">
   <link rel="stylesheet" href="/static/style.css?v={{ asset_v }}">
-  <link rel="icon" href="/static/favicon.ico">
+
+  {# SVG first for browsers that take it (it carries a dark-mode variant);
+     .ico is the fallback and the file Google looks for. #}
+  <link rel="icon" href="/static/icon.svg?v={{ asset_v }}" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v={{ asset_v }}">
+
+  <meta property="og:site_name" content="Neoarcana">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ self.title() }}">
+  <meta property="og:description" content="{{ self.description() }}">
+  <meta property="og:url" content="{{ site_url }}{{ request.url.path }}">
+  <meta name="twitter:card" content="summary">
+  {% block head_extra %}{% endblock %}
 </head>
 <body>
   <div class="wrap">

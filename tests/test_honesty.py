@@ -78,3 +78,44 @@ def test_reading_page_reflects_actual_source_not_configuration(client):
 
     reading.entropy_source = "local"       # as if it had fallen back
     assert "shuffled by cryptographic randomness" in client.get(f"/readings/{reading_id}").text
+
+
+def test_meta_description_follows_the_configuration(client, monkeypatch):
+    """The description Google shows is a claim like any other: it must not
+    promise atmospheric noise when the shuffle is local."""
+    html = client.get("/").text
+    desc = html[html.index('name="description"'):]
+    desc = desc[:desc.index(">")]
+    assert "cryptographic randomness" in desc
+    assert "atmospheric" not in desc
+
+
+def test_readings_are_kept_out_of_the_index(client):
+    """A reading carries the querent's question, so it must not be indexed."""
+    r = client.post("/readings", data={"spread_key": "one_card", "question": "private"},
+                    follow_redirects=False)
+    html = client.get(r.headers["location"]).text
+    assert 'name="robots" content="noindex, nofollow"' in html
+
+    robots = client.get("/robots.txt").text
+    assert "Disallow: /readings/" in robots
+    assert "Disallow: /api/" in robots
+
+
+def test_public_pages_are_indexable_and_canonical(client):
+    for path in ("/", "/faq", "/ask/three_card"):
+        html = client.get(path).text
+        assert "noindex" not in html, path
+        assert 'rel="canonical"' in html, path
+
+
+def test_favicon_served_from_root_for_crawlers(client):
+    r = client.get("/favicon.ico")
+    assert r.status_code == 200
+    assert r.content[:4] == b"\x00\x00\x01\x00", "not a real .ico container"
+
+
+def test_sitemap_lists_the_public_pages_only(client):
+    xml = client.get("/sitemap.xml").text
+    assert "/faq" in xml and "/ask/celtic_cross" in xml
+    assert "/readings/" not in xml

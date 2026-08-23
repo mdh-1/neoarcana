@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ spread.title }} · Neoarcana{% endblock %}
+{% block description %}{{ spread.title }}: {{ spread.tagline|lower }}. Ask a question, or leave it blank for a general reading.{% endblock %}
 {% block content %}
 <header class="hero hero-small">
   <div class="kicker">{{ spread.title }}</div>

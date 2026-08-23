@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Neoarcana">
+  <!-- A single card with a star. Crossed cards were tried first and lost:
+       at 16px the crossing card disappears and the mark reads as a blob.
+       Oxblood field rather than bone, because the inverted version is the
+       only one that still holds contrast in a browser tab or a search result. -->
+  <rect width="48" height="48" rx="9" fill="#7a2e2a"/>
+  <rect x="14" y="8" width="20" height="32" rx="3" fill="#faf8f4"/>
+  <path d="M24 15.4 L26.4 21.6 L32.6 24 L26.4 26.4 L24 32.6 L21.6 26.4 L15.4 24 L21.6 21.6 Z" fill="#7a2e2a"/>
+</svg>
