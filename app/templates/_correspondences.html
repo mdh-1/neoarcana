@@ -1,0 +1,17 @@
+{# Element glyph + Golden Dawn attributions.
+
+   Inline SVG rather than the Unicode alchemical block (U+1F700): those
+   characters are tofu on most Windows and Android. Twelve lines of markup
+   render identically everywhere. #}
+{% macro correspondences(c) %}
+{%- if c.correspondences -%}
+<div class="corr">
+  {%- if c.element == "Fire" %}<svg class="el" viewBox="0 0 20 18" aria-hidden="true"><path d="M10 1.5 18.5 16.5H1.5Z"/></svg>
+  {%- elif c.element == "Water" %}<svg class="el" viewBox="0 0 20 18" aria-hidden="true"><path d="M10 16.5 1.5 1.5h17Z"/></svg>
+  {%- elif c.element == "Air" %}<svg class="el" viewBox="0 0 20 18" aria-hidden="true"><path d="M10 1.5 18.5 16.5H1.5Z"/><path d="M4.6 11.8h10.8"/></svg>
+  {%- elif c.element == "Earth" %}<svg class="el" viewBox="0 0 20 18" aria-hidden="true"><path d="M10 16.5 1.5 1.5h17Z"/><path d="M4.6 6.2h10.8"/></svg>
+  {%- endif %}
+  <span>{{ c.correspondences }}</span>
+</div>
+{%- endif -%}
+{% endmacro %}

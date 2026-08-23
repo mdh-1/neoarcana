@@ -1,3 +1,4 @@
+import hashlib
 import json
 import time
 from collections import defaultdict, deque
@@ -15,9 +16,26 @@ from .services import reading as reading_service
 
 BASE_DIR = Path(__file__).resolve().parent
 
+def _asset_version(*names: str) -> str:
+    """Short content hash of the CSS and JS, appended to their URLs.
+
+    Caddy serves /static/* with `immutable, max-age=2592000`, which is right
+    for the card images (their filenames never change) but would pin a
+    returning visitor to a month-old stylesheet, since style.css keeps its
+    name across deploys. Changing the query string changes the URL, so a
+    deploy invalidates the cache the moment content changes and never
+    otherwise.
+    """
+    h = hashlib.sha256()
+    for name in names:
+        h.update((BASE_DIR / "static" / name).read_bytes())
+    return h.hexdigest()[:8]
+
+
 app = FastAPI(title="Neoarcana", docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
+templates.env.globals["asset_v"] = _asset_version("style.css", "reading.js")
 
 load_deck()  # validate card data at startup, not first request
 

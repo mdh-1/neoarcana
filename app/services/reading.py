@@ -49,6 +49,10 @@ as a whole and answers the question directly if one was asked.
 sentences per card.
 - If the question is not in English, answer entirely in the question's \
 language, translating the position names and "The thread" too.
+- Each card carries correspondences (element, planet, Hebrew letter). Let \
+them colour your reading: the element especially, since it says how the \
+card's energy moves. Never name them and never use esoteric jargon; the \
+querent gets plain language, not a lesson in symbolism.
 - Do not use em dashes anywhere in your answer. Use commas, colons, \
 parentheses or full stops instead.
 """
@@ -248,6 +252,8 @@ def _user_prompt(reading: Reading) -> str:
         # the same curated meaning the page shows under the card, so the
         # essay and the captions grow from the same soil
         lines.append(f"   (traditional meaning: {c.meaning})")
+        if c.correspondences:
+            lines.append(f"   (correspondences: {c.correspondences})")
     return "\n".join(lines)
 
 

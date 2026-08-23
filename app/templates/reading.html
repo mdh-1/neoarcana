@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_correspondences.html" import correspondences %}
 {% block title %}Your reading · Neoarcana{% endblock %}
 {% block content %}
 {% set roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X"] %}
@@ -22,6 +23,7 @@
     <div class="tip" role="note">
       <div class="tip-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
       <div class="tip-name">{{ c.display_name }}</div>
+      {{ correspondences(c) }}
       <p class="tip-meaning">{{ c.meaning }}</p>
       <p class="tip-desc">{{ c.position_description }}</p>
     </div>
@@ -48,9 +50,11 @@
         <div class="tip" role="note">
           <div class="tip-pos">{{ roman[0] }} · {{ c[0].position_name }}</div>
           <div class="tip-name">{{ c[0].display_name }}</div>
+          {{ correspondences(c[0]) }}
           <p class="tip-meaning">{{ c[0].meaning }}</p>
           <div class="tip-pos">{{ roman[1] }} · {{ c[1].position_name }}, crossing</div>
           <div class="tip-name">{{ c[1].display_name }}</div>
+          {{ correspondences(c[1]) }}
           <p class="tip-meaning">{{ c[1].meaning }}</p>
         </div>
       </div>
@@ -72,6 +76,7 @@
       <span class="no">{{ "%02d"|format(c.position) }}</span>
       <div>
         <strong>{{ c.position_name }}</strong> · {{ c.display_name }}
+        {{ correspondences(c) }}
         <p>{{ c.meaning }}</p>
         <details>
           <summary>This position</summary>
@@ -90,12 +95,14 @@
       <div class="tip" role="note">
         <div class="tip-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
         <div class="tip-name">{{ c.display_name }}</div>
+        {{ correspondences(c) }}
         <p class="tip-meaning">{{ c.meaning }}</p>
         <p class="tip-desc">{{ c.position_description }}</p>
       </div>
       <figcaption>
         <div class="plate-no">Plate {{ roman[c.position - 1] }} · {{ c.position_name }}</div>
         <div class="plate-name">{{ c.display_name }}</div>
+        {{ correspondences(c) }}
         <p class="plate-note">{{ c.meaning }}</p>
         <details>
           <summary>This position</summary>
@@ -121,5 +128,5 @@
     <a class="quiet" href="/">Different spread</a>
   </div>
 </section>
-<script src="/static/reading.js"></script>
+<script src="/static/reading.js?v={{ asset_v }}"></script>
 {% endblock %}

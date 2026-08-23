@@ -19,6 +19,10 @@ from .spreads import Spread
 
 DECK_SIZE = 78
 
+# Wands/Cups/Swords/Pentacles map to the four classical elements. Majors
+# carry their own element in the data; minors and courts inherit the suit's.
+SUIT_ELEMENT = {"Wands": "Fire", "Cups": "Water", "Swords": "Air", "Pentacles": "Earth"}
+
 
 class ThothAttributes(BaseModel):
     """Three shapes in the wild: majors carry regalia (gemstone, weapon,
@@ -77,6 +81,39 @@ class DrawnCard(BaseModel):
     @property
     def meaning(self) -> str:
         return self.card.reversed if self.is_reversed else self.card.upright
+
+    @property
+    def correspondences(self) -> str:
+        """Golden Dawn attributions as one line, e.g. "Fire · Mars · Pe".
+
+        Shown under the card and given to the interpreter. The scheme is
+        1890s Golden Dawn, which both Waite and Crowley drew on, so nothing
+        here depends on the copyrighted Thoth material.
+
+        Three shapes, because the deck has three kinds of card: majors carry
+        element/planet/Hebrew letter, courts carry element-of-element (the
+        most interpretively useful of the three), and numbered minors carry
+        their suit's element plus a planetary attribution.
+        """
+        card, th = self.card, self.card.thoth_attributes
+        if card.arcana == "Major":
+            parts = (card.element, card.astrology, card.hebrew_letter)
+        elif th.element:  # court card, e.g. "Water of Water"
+            parts = (th.element,)
+        else:
+            parts = (SUIT_ELEMENT.get(card.suit or ""), th.planet)
+        return " · ".join(p for p in parts if p)
+
+    @property
+    def element(self) -> str:
+        """Fire | Water | Air | Earth, for picking the glyph. Empty when the
+        data gives no element (a court's "Water of Water" starts with one)."""
+        card = self.card
+        if card.arcana == "Major":
+            return card.element or ""
+        if card.suit:
+            return SUIT_ELEMENT.get(card.suit, "")
+        return ""
 
     @property
     def crowley_meaning(self) -> str:

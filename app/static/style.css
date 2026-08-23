@@ -178,6 +178,25 @@ summary:hover { color: var(--oxblood); }
   .cc-staff .cc-card { width: 108px; }
 }
 
+/* ---------- correspondences ---------- */
+/* Golden Dawn attributions under each card: element, planet, Hebrew letter.
+   Set in the same small-caps sans as the position label so it reads as a
+   fact about the card rather than ornament. */
+.corr {
+  display: flex; align-items: center; gap: 6px; margin-top: 6px;
+  font-family: var(--sans); font-size: 10.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-mid);
+}
+.corr span { padding-top: 1px; }
+/* Inline SVG rather than the Unicode alchemical block (U+1F700), which is
+   tofu on most Windows and Android. Sized here, not in the markup. */
+svg.el {
+  width: 12px; height: 11px; flex: none;
+  fill: none; stroke: var(--oxblood); stroke-width: 1.6; stroke-linejoin: round;
+}
+/* The plates index is a text column, so the line sits left of centre. */
+.cc-index .corr { margin-bottom: 2px; }
+
 /* ---------- card tooltips (all spreads) ---------- */
 /* The plates index below carries the same text, so this is an aid rather
    than the only route to it: touch devices, which have no hover, lose
