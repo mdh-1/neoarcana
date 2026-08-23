@@ -47,6 +47,10 @@ class Card(BaseModel):
     description: str
     picture: str
     picture_reversed: str
+    # Intrinsic size, so the browser reserves space before a lazily
+    # loaded card arrives. Reversed art is the same box, rotated.
+    picture_width: int
+    picture_height: int
     upright: str
     reversed: str
     crowley_name: str
@@ -81,6 +85,12 @@ class DrawnCard(BaseModel):
     @property
     def meaning(self) -> str:
         return self.card.reversed if self.is_reversed else self.card.upright
+
+    @property
+    def picture_size(self) -> tuple[int, int]:
+        """Width and height of whichever face is being shown. The reversed
+        file is the same image rotated, so the box does not change."""
+        return self.card.picture_width, self.card.picture_height
 
     @property
     def correspondences(self) -> str:

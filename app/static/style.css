@@ -113,7 +113,9 @@ button:hover { background: var(--oxblood); border-color: var(--oxblood); }
    pointer-events:none means the fade-in never steals the hover. */
 .plate { position: relative; }
 .plate img {
-  display: block; width: 100%; border-radius: 3px;
+  /* height:auto is required now the tags carry width/height: without it the
+     attribute fixes the box and every card renders squashed. */
+  display: block; width: 100%; height: auto; border-radius: 3px;
   box-shadow: 0 1px 3px rgba(25,23,20,.2), 0 16px 36px -22px rgba(25,23,20,.45);
   transition: transform .3s ease;
 }
@@ -143,7 +145,7 @@ summary:hover { color: var(--oxblood); }
 
 .cc-card { width: 100%; max-width: 148px; text-align: center; margin: 0; position: relative; }
 .cc-card img, .cc-center img {
-  display: block; width: 100%; border-radius: 3px;
+  display: block; width: 100%; height: auto; border-radius: 3px;
   box-shadow: 0 1px 3px rgba(25,23,20,.2), 0 12px 28px -18px rgba(25,23,20,.45);
 }
 .cc-pos {

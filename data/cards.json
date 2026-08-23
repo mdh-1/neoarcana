@@ -22,7 +22,9 @@
       "divine_name": "Parzival",
       "thelemic_title": "The Spirit of Aether"
     },
-    "picture_reversed": "the_fool_reversed.jpg"
+    "picture_reversed": "the_fool_reversed.jpg",
+    "picture_width": 369,
+    "picture_height": 640
   },
   {
     "name": "I The Magician",
@@ -47,7 +49,9 @@
       "divine_name": "Hermes",
       "thelemic_title": "The Magus of Power"
     },
-    "picture_reversed": "the_magician_reversed.jpg"
+    "picture_reversed": "the_magician_reversed.jpg",
+    "picture_width": 380,
+    "picture_height": 640
   },
   {
     "name": "II The High Priestess",
@@ -72,7 +76,9 @@
       "divine_name": "Diana",
       "thelemic_title": "The Priestess of the Silver Star"
     },
-    "picture_reversed": "the_high_priestess_reversed.jpg"
+    "picture_reversed": "the_high_priestess_reversed.jpg",
+    "picture_width": 361,
+    "picture_height": 640
   },
   {
     "name": "III The Empress",
@@ -97,7 +103,9 @@
       "divine_name": "Aphrodite",
       "thelemic_title": "The Daughter of the Mighty Ones"
     },
-    "picture_reversed": "the_empress_reversed.jpg"
+    "picture_reversed": "the_empress_reversed.jpg",
+    "picture_width": 378,
+    "picture_height": 640
   },
   {
     "name": "IV The Emperor",
@@ -122,7 +130,9 @@
       "divine_name": "Amoun-Ra",
       "thelemic_title": "The Sun of the Morning"
     },
-    "picture_reversed": "the_emperor_reversed.jpg"
+    "picture_reversed": "the_emperor_reversed.jpg",
+    "picture_width": 368,
+    "picture_height": 640
   },
   {
     "name": "V The Hierophant",
@@ -147,7 +157,9 @@
       "divine_name": "Mithras",
       "thelemic_title": "The Magus of the Eternal Gods"
     },
-    "picture_reversed": "the_hierophant_reversed.jpg"
+    "picture_reversed": "the_hierophant_reversed.jpg",
+    "picture_width": 376,
+    "picture_height": 640
   },
   {
     "name": "VI The Lovers",
@@ -172,7 +184,9 @@
       "divine_name": "Aphrodite",
       "thelemic_title": "The Children of the Voice Divine"
     },
-    "picture_reversed": "the_lovers_reversed.jpg"
+    "picture_reversed": "the_lovers_reversed.jpg",
+    "picture_width": 364,
+    "picture_height": 640
   },
   {
     "name": "VII The Chariot",
@@ -197,7 +211,9 @@
       "divine_name": "Diana",
       "thelemic_title": "The Child of the Powers of the Waters"
     },
-    "picture_reversed": "the_chariot_reversed.jpg"
+    "picture_reversed": "the_chariot_reversed.jpg",
+    "picture_width": 372,
+    "picture_height": 640
   },
   {
     "name": "VIII Strength",
@@ -222,7 +238,9 @@
       "divine_name": "Bacchus",
       "thelemic_title": "The Lust of the Lion-Lord"
     },
-    "picture_reversed": "strength_reversed.jpg"
+    "picture_reversed": "strength_reversed.jpg",
+    "picture_width": 370,
+    "picture_height": 640
   },
   {
     "name": "IX The Hermit",
@@ -247,7 +265,9 @@
       "divine_name": "Mercury",
       "thelemic_title": "The Magus of the Voice of Light"
     },
-    "picture_reversed": "the_hermit_reversed.jpg"
+    "picture_reversed": "the_hermit_reversed.jpg",
+    "picture_width": 378,
+    "picture_height": 640
   },
   {
     "name": "X Wheel of Fortune",
@@ -272,7 +292,9 @@
       "divine_name": "Zeus",
       "thelemic_title": "The Lord of the Forces of Life"
     },
-    "picture_reversed": "wheel_of_fortune_reversed.jpg"
+    "picture_reversed": "wheel_of_fortune_reversed.jpg",
+    "picture_width": 362,
+    "picture_height": 640
   },
   {
     "name": "XI Justice",
@@ -297,7 +319,9 @@
       "divine_name": "Themis",
       "thelemic_title": "The Daughter of the Lords of Truth"
     },
-    "picture_reversed": "justice_reversed.jpg"
+    "picture_reversed": "justice_reversed.jpg",
+    "picture_width": 367,
+    "picture_height": 640
   },
   {
     "name": "XII The Hanged Man",
@@ -322,7 +346,9 @@
       "divine_name": "Osiris",
       "thelemic_title": "The Spirit of the Mighty Waters"
     },
-    "picture_reversed": "the_hanged_man_reversed.jpg"
+    "picture_reversed": "the_hanged_man_reversed.jpg",
+    "picture_width": 365,
+    "picture_height": 640
   },
   {
     "name": "XIII Death",
@@ -347,7 +373,9 @@
       "divine_name": "Apophis",
       "thelemic_title": "The Child of the Great Transformers"
     },
-    "picture_reversed": "death_reversed.jpg"
+    "picture_reversed": "death_reversed.jpg",
+    "picture_width": 373,
+    "picture_height": 640
   },
   {
     "name": "XIV Temperance",
@@ -372,7 +400,9 @@
       "divine_name": "Chiron",
       "thelemic_title": "The Daughter of the Reconcilers"
     },
-    "picture_reversed": "temperance_reversed.jpg"
+    "picture_reversed": "temperance_reversed.jpg",
+    "picture_width": 369,
+    "picture_height": 640
   },
   {
     "name": "XV The Devil",
@@ -397,7 +427,9 @@
       "divine_name": "Pan",
       "thelemic_title": "The Lord of the Gates of Matter"
     },
-    "picture_reversed": "the_devil_reversed.jpg"
+    "picture_reversed": "the_devil_reversed.jpg",
+    "picture_width": 374,
+    "picture_height": 640
   },
   {
     "name": "XVI The Tower",
@@ -422,7 +454,9 @@
       "divine_name": "Thor",
       "thelemic_title": "The Lord of the Hosts of the Mighty"
     },
-    "picture_reversed": "the_tower_reversed.jpg"
+    "picture_reversed": "the_tower_reversed.jpg",
+    "picture_width": 366,
+    "picture_height": 640
   },
   {
     "name": "XVII The Star",
@@ -447,7 +481,9 @@
       "divine_name": "Nuit",
       "thelemic_title": "The Daughter of the Firmament"
     },
-    "picture_reversed": "the_star_reversed.jpg"
+    "picture_reversed": "the_star_reversed.jpg",
+    "picture_width": 378,
+    "picture_height": 640
   },
   {
     "name": "XVIII The Moon",
@@ -472,7 +508,9 @@
       "divine_name": "Hecate",
       "thelemic_title": "The Ruler of Flux and Reflux"
     },
-    "picture_reversed": "the_moon_reversed.jpg"
+    "picture_reversed": "the_moon_reversed.jpg",
+    "picture_width": 361,
+    "picture_height": 640
   },
   {
     "name": "XIX The Sun",
@@ -497,7 +535,9 @@
       "divine_name": "Ra",
       "thelemic_title": "The Lord of the Fire of the World"
     },
-    "picture_reversed": "the_sun_reversed.jpg"
+    "picture_reversed": "the_sun_reversed.jpg",
+    "picture_width": 372,
+    "picture_height": 640
   },
   {
     "name": "XX Judgment",
@@ -522,7 +562,9 @@
       "magical_weapon": "The Trumpet",
       "divine_name": "Horus",
       "thelemic_title": "The Spirit of the Primal Fire"
-    }
+    },
+    "picture_width": 374,
+    "picture_height": 640
   },
   {
     "name": "XXI The World",
@@ -547,7 +589,9 @@
       "divine_name": "Saturn",
       "thelemic_title": "The Great One of the Night of Time"
     },
-    "picture_reversed": "the_world_reversed.jpg"
+    "picture_reversed": "the_world_reversed.jpg",
+    "picture_width": 376,
+    "picture_height": 640
   },
   {
     "name": "Ace of Cups",
@@ -567,7 +611,9 @@
       "planet": "Moon in Cancer",
       "thelemic_key": "The Womb of the World"
     },
-    "picture_reversed": "ace_of_cups_reversed.jpg"
+    "picture_reversed": "ace_of_cups_reversed.jpg",
+    "picture_width": 368,
+    "picture_height": 640
   },
   {
     "name": "Two of Cups",
@@ -587,7 +633,9 @@
       "planet": "Venus in Cancer",
       "thelemic_key": "The Chalice of Ecstasy"
     },
-    "picture_reversed": "2_of_cups_reversed.jpg"
+    "picture_reversed": "2_of_cups_reversed.jpg",
+    "picture_width": 377,
+    "picture_height": 640
   },
   {
     "name": "Three of Cups",
@@ -607,7 +655,9 @@
       "planet": "Mercury in Cancer",
       "thelemic_key": "The Waters of Life"
     },
-    "picture_reversed": "3_of_cups_reversed.jpg"
+    "picture_reversed": "3_of_cups_reversed.jpg",
+    "picture_width": 361,
+    "picture_height": 640
   },
   {
     "name": "Four of Cups",
@@ -627,7 +677,9 @@
       "planet": "Moon in Scorpio",
       "thelemic_key": "The Well of the Unconscious"
     },
-    "picture_reversed": "4_of_cups_reversed.jpg"
+    "picture_reversed": "4_of_cups_reversed.jpg",
+    "picture_width": 374,
+    "picture_height": 640
   },
   {
     "name": "Five of Cups",
@@ -647,7 +699,9 @@
       "planet": "Mars in Scorpio",
       "thelemic_key": "The Waters of Bitterness"
     },
-    "picture_reversed": "5_of_cups_reversed.jpg"
+    "picture_reversed": "5_of_cups_reversed.jpg",
+    "picture_width": 366,
+    "picture_height": 640
   },
   {
     "name": "Six of Cups",
@@ -667,7 +721,9 @@
       "planet": "Sun in Scorpio",
       "thelemic_key": "The Alchemical Marriage"
     },
-    "picture_reversed": "6_of_cups_reversed.jpg"
+    "picture_reversed": "6_of_cups_reversed.jpg",
+    "picture_width": 375,
+    "picture_height": 640
   },
   {
     "name": "Seven of Cups",
@@ -687,7 +743,9 @@
       "planet": "Venus in Scorpio",
       "thelemic_key": "The Chalice of Delusion"
     },
-    "picture_reversed": "7_of_cups_reversed.jpg"
+    "picture_reversed": "7_of_cups_reversed.jpg",
+    "picture_width": 360,
+    "picture_height": 640
   },
   {
     "name": "Eight of Cups",
@@ -707,7 +765,9 @@
       "planet": "Saturn in Pisces",
       "thelemic_key": "The Waters of Stagnation"
     },
-    "picture_reversed": "8_of_cups_reversed.jpg"
+    "picture_reversed": "8_of_cups_reversed.jpg",
+    "picture_width": 369,
+    "picture_height": 640
   },
   {
     "name": "Nine of Cups",
@@ -727,7 +787,9 @@
       "planet": "Jupiter in Pisces",
       "thelemic_key": "The Chalice of Bliss"
     },
-    "picture_reversed": "9_of_cups_reversed.jpg"
+    "picture_reversed": "9_of_cups_reversed.jpg",
+    "picture_width": 368,
+    "picture_height": 640
   },
   {
     "name": "Ten of Cups",
@@ -747,7 +809,9 @@
       "planet": "Mars in Pisces",
       "thelemic_key": "The Waters of Perfect Peace"
     },
-    "picture_reversed": "10_of_cups_reversed.jpg"
+    "picture_reversed": "10_of_cups_reversed.jpg",
+    "picture_width": 379,
+    "picture_height": 640
   },
   {
     "name": "Page of Cups",
@@ -766,7 +830,9 @@
       "element": "Earth of Water",
       "thelemic_key": "The Lotus Rising"
     },
-    "picture_reversed": "page_of_cups_reversed.jpg"
+    "picture_reversed": "page_of_cups_reversed.jpg",
+    "picture_width": 364,
+    "picture_height": 640
   },
   {
     "name": "Knight of Cups",
@@ -785,7 +851,9 @@
       "element": "Fire of Water",
       "thelemic_key": "The Tidal Wave"
     },
-    "picture_reversed": "knight_of_cups_reversed.jpg"
+    "picture_reversed": "knight_of_cups_reversed.jpg",
+    "picture_width": 372,
+    "picture_height": 640
   },
   {
     "name": "Queen of Cups",
@@ -804,7 +872,9 @@
       "element": "Water of Water",
       "thelemic_key": "The Grail Queen"
     },
-    "picture_reversed": "queen_of_cups_reversed.jpg"
+    "picture_reversed": "queen_of_cups_reversed.jpg",
+    "picture_width": 368,
+    "picture_height": 640
   },
   {
     "name": "King of Cups",
@@ -823,7 +893,9 @@
       "element": "Air of Water",
       "thelemic_key": "The Reflecting Mind"
     },
-    "picture_reversed": "king_of_cups_reversed.jpg"
+    "picture_reversed": "king_of_cups_reversed.jpg",
+    "picture_width": 376,
+    "picture_height": 640
   },
   {
     "name": "Ace of Pentacles",
@@ -843,7 +915,9 @@
       "planet": "Saturn in Capricorn",
       "thelemic_key": "The Seed of the World"
     },
-    "picture_reversed": "ace_of_pentacles_reversed.jpg"
+    "picture_reversed": "ace_of_pentacles_reversed.jpg",
+    "picture_width": 368,
+    "picture_height": 640
   },
   {
     "name": "Two of Pentacles",
@@ -863,7 +937,9 @@
       "planet": "Jupiter in Capricorn",
       "thelemic_key": "The Dance of Life"
     },
-    "picture_reversed": "2_of_pentacles_reversed.jpg"
+    "picture_reversed": "2_of_pentacles_reversed.jpg",
+    "picture_width": 374,
+    "picture_height": 640
   },
   {
     "name": "Three of Pentacles",
@@ -883,7 +959,9 @@
       "planet": "Mars in Capricorn",
       "thelemic_key": "The Builder's Stone"
     },
-    "picture_reversed": "3_of_pentacles_reversed.jpg"
+    "picture_reversed": "3_of_pentacles_reversed.jpg",
+    "picture_width": 362,
+    "picture_height": 640
   },
   {
     "name": "Four of Pentacles",
@@ -903,7 +981,9 @@
       "planet": "Sun in Capricorn",
       "thelemic_key": "The Fortress"
     },
-    "picture_reversed": "4_of_pentacles_reversed.jpg"
+    "picture_reversed": "4_of_pentacles_reversed.jpg",
+    "picture_width": 372,
+    "picture_height": 640
   },
   {
     "name": "Five of Pentacles",
@@ -923,7 +1003,9 @@
       "planet": "Mercury in Taurus",
       "thelemic_key": "The Shadow of Matter"
     },
-    "picture_reversed": "5_of_pentacles_reversed.jpg"
+    "picture_reversed": "5_of_pentacles_reversed.jpg",
+    "picture_width": 373,
+    "picture_height": 640
   },
   {
     "name": "Six of Pentacles",
@@ -943,7 +1025,9 @@
       "planet": "Moon in Taurus",
       "thelemic_key": "The Golden Cup"
     },
-    "picture_reversed": "6_of_pentacles_reversed.jpg"
+    "picture_reversed": "6_of_pentacles_reversed.jpg",
+    "picture_width": 380,
+    "picture_height": 640
   },
   {
     "name": "Seven of Pentacles",
@@ -963,7 +1047,9 @@
       "planet": "Saturn in Taurus",
       "thelemic_key": "The Unripe Harvest"
     },
-    "picture_reversed": "7_of_pentacles_reversed.jpg"
+    "picture_reversed": "7_of_pentacles_reversed.jpg",
+    "picture_width": 362,
+    "picture_height": 640
   },
   {
     "name": "Eight of Pentacles",
@@ -983,7 +1069,9 @@
       "planet": "Sun in Virgo",
       "thelemic_key": "The Skillful Hand"
     },
-    "picture_reversed": "8_of_pentacles_reversed.jpg"
+    "picture_reversed": "8_of_pentacles_reversed.jpg",
+    "picture_width": 370,
+    "picture_height": 640
   },
   {
     "name": "Nine of Pentacles",
@@ -1003,7 +1091,9 @@
       "planet": "Venus in Virgo",
       "thelemic_key": "The Garden of Eden"
     },
-    "picture_reversed": "9_of_pentacles_reversed.jpg"
+    "picture_reversed": "9_of_pentacles_reversed.jpg",
+    "picture_width": 368,
+    "picture_height": 640
   },
   {
     "name": "Ten of Pentacles",
@@ -1023,7 +1113,9 @@
       "planet": "Mercury in Virgo",
       "thelemic_key": "The Full Corn"
     },
-    "picture_reversed": "10_of_pentacles_reversed.jpg"
+    "picture_reversed": "10_of_pentacles_reversed.jpg",
+    "picture_width": 372,
+    "picture_height": 640
   },
   {
     "name": "Page of Pentacles",
@@ -1042,7 +1134,9 @@
       "element": "Earth of Earth",
       "thelemic_key": "The Seed of the Earth"
     },
-    "picture_reversed": "page_of_pentacles_reversed.jpg"
+    "picture_reversed": "page_of_pentacles_reversed.jpg",
+    "picture_width": 363,
+    "picture_height": 640
   },
   {
     "name": "Knight of Pentacles",
@@ -1061,7 +1155,9 @@
       "element": "Fire of Earth",
       "thelemic_key": "The Plowman"
     },
-    "picture_reversed": "knight_of_pentacles_reversed.jpg"
+    "picture_reversed": "knight_of_pentacles_reversed.jpg",
+    "picture_width": 375,
+    "picture_height": 640
   },
   {
     "name": "Queen of Pentacles",
@@ -1080,7 +1176,9 @@
       "element": "Water of Earth",
       "thelemic_key": "The Earth Mother"
     },
-    "picture_reversed": "queen_of_pentacles_reversed.jpg"
+    "picture_reversed": "queen_of_pentacles_reversed.jpg",
+    "picture_width": 369,
+    "picture_height": 640
   },
   {
     "name": "King of Pentacles",
@@ -1099,7 +1197,9 @@
       "element": "Air of Earth",
       "thelemic_key": "The Architect"
     },
-    "picture_reversed": "king_of_pentacles_reversed.jpg"
+    "picture_reversed": "king_of_pentacles_reversed.jpg",
+    "picture_width": 378,
+    "picture_height": 640
   },
   {
     "name": "Ace of Swords",
@@ -1119,7 +1219,9 @@
       "planet": "Mercury in Libra",
       "thelemic_key": "The Sword of Truth"
     },
-    "picture_reversed": "ace_of_swords_reversed.jpg"
+    "picture_reversed": "ace_of_swords_reversed.jpg",
+    "picture_width": 366,
+    "picture_height": 640
   },
   {
     "name": "Two of Swords",
@@ -1139,7 +1241,9 @@
       "planet": "Moon in Libra",
       "thelemic_key": "The Crossed Swords"
     },
-    "picture_reversed": "2_of_swords_reversed.jpg"
+    "picture_reversed": "2_of_swords_reversed.jpg",
+    "picture_width": 375,
+    "picture_height": 640
   },
   {
     "name": "Three of Swords",
@@ -1159,7 +1263,9 @@
       "planet": "Saturn in Libra",
       "thelemic_key": "The Pierced Heart"
     },
-    "picture_reversed": "3_of_swords_reversed.jpg"
+    "picture_reversed": "3_of_swords_reversed.jpg",
+    "picture_width": 369,
+    "picture_height": 640
   },
   {
     "name": "Four of Swords",
@@ -1179,7 +1285,9 @@
       "planet": "Jupiter in Libra",
       "thelemic_key": "The Sword in Repose"
     },
-    "picture_reversed": "4_of_swords_reversed.jpg"
+    "picture_reversed": "4_of_swords_reversed.jpg",
+    "picture_width": 376,
+    "picture_height": 640
   },
   {
     "name": "Five of Swords",
@@ -1199,7 +1307,9 @@
       "planet": "Venus in Aquarius",
       "thelemic_key": "The Broken Sword"
     },
-    "picture_reversed": "5_of_swords_reversed.jpg"
+    "picture_reversed": "5_of_swords_reversed.jpg",
+    "picture_width": 364,
+    "picture_height": 640
   },
   {
     "name": "Six of Swords",
@@ -1219,7 +1329,9 @@
       "planet": "Mercury in Aquarius",
       "thelemic_key": "The Sword of Reason"
     },
-    "picture_reversed": "6_of_swords_reversed.jpg"
+    "picture_reversed": "6_of_swords_reversed.jpg",
+    "picture_width": 374,
+    "picture_height": 640
   },
   {
     "name": "Seven of Swords",
@@ -1239,7 +1351,9 @@
       "planet": "Moon in Aquarius",
       "thelemic_key": "The Unstable Mind"
     },
-    "picture_reversed": "7_of_swords_reversed.jpg"
+    "picture_reversed": "7_of_swords_reversed.jpg",
+    "picture_width": 364,
+    "picture_height": 640
   },
   {
     "name": "Eight of Swords",
@@ -1259,7 +1373,9 @@
       "planet": "Jupiter in Gemini",
       "thelemic_key": "The Web of Thought"
     },
-    "picture_reversed": "8_of_swords_reversed.jpg"
+    "picture_reversed": "8_of_swords_reversed.jpg",
+    "picture_width": 375,
+    "picture_height": 640
   },
   {
     "name": "Nine of Swords",
@@ -1279,7 +1395,9 @@
       "planet": "Mars in Gemini",
       "thelemic_key": "The Sword of Despair"
     },
-    "picture_reversed": "9_of_swords_reversed.jpg"
+    "picture_reversed": "9_of_swords_reversed.jpg",
+    "picture_width": 360,
+    "picture_height": 640
   },
   {
     "name": "Ten of Swords",
@@ -1299,7 +1417,9 @@
       "planet": "Sun in Gemini",
       "thelemic_key": "The Final Sword"
     },
-    "picture_reversed": "10_of_swords_reversed.jpg"
+    "picture_reversed": "10_of_swords_reversed.jpg",
+    "picture_width": 372,
+    "picture_height": 640
   },
   {
     "name": "Page of Swords",
@@ -1318,7 +1438,9 @@
       "element": "Earth of Air",
       "thelemic_key": "The Wind's Messenger"
     },
-    "picture_reversed": "page_of_swords_reversed.jpg"
+    "picture_reversed": "page_of_swords_reversed.jpg",
+    "picture_width": 366,
+    "picture_height": 640
   },
   {
     "name": "Knight of Swords",
@@ -1337,7 +1459,9 @@
       "element": "Fire of Air",
       "thelemic_key": "The Storm Wind"
     },
-    "picture_reversed": "knight_of_swords_reversed.jpg"
+    "picture_reversed": "knight_of_swords_reversed.jpg",
+    "picture_width": 377,
+    "picture_height": 640
   },
   {
     "name": "Queen of Swords",
@@ -1356,7 +1480,9 @@
       "element": "Water of Air",
       "thelemic_key": "The Clear Mind"
     },
-    "picture_reversed": "queen_of_swords_reversed.jpg"
+    "picture_reversed": "queen_of_swords_reversed.jpg",
+    "picture_width": 361,
+    "picture_height": 640
   },
   {
     "name": "King of Swords",
@@ -1375,7 +1501,9 @@
       "element": "Air of Air",
       "thelemic_key": "The Razor's Edge"
     },
-    "picture_reversed": "king_of_swords_reversed.jpg"
+    "picture_reversed": "king_of_swords_reversed.jpg",
+    "picture_width": 375,
+    "picture_height": 640
   },
   {
     "name": "Ace of Wands",
@@ -1395,7 +1523,9 @@
       "planet": "Sun in Aries",
       "thelemic_key": "Energy of the Sun at its most potent"
     },
-    "picture_reversed": "ace_of_wands_reversed.jpg"
+    "picture_reversed": "ace_of_wands_reversed.jpg",
+    "picture_width": 360,
+    "picture_height": 640
   },
   {
     "name": "Two of Wands",
@@ -1415,7 +1545,9 @@
       "planet": "Mars in Aries",
       "thelemic_key": "The Will to Power"
     },
-    "picture_reversed": "2_of_wands_reversed.jpg"
+    "picture_reversed": "2_of_wands_reversed.jpg",
+    "picture_width": 376,
+    "picture_height": 640
   },
   {
     "name": "Three of Wands",
@@ -1435,7 +1567,9 @@
       "planet": "Sun in Aries",
       "thelemic_key": "Established Solar Power"
     },
-    "picture_reversed": "3_of_wands_reversed.jpg"
+    "picture_reversed": "3_of_wands_reversed.jpg",
+    "picture_width": 369,
+    "picture_height": 640
   },
   {
     "name": "Four of Wands",
@@ -1455,7 +1589,9 @@
       "planet": "Venus in Aries",
       "thelemic_key": "Perfect Work Perfected"
     },
-    "picture_reversed": "4_of_wands_reversed.jpg"
+    "picture_reversed": "4_of_wands_reversed.jpg",
+    "picture_width": 374,
+    "picture_height": 640
   },
   {
     "name": "Five of Wands",
@@ -1475,7 +1611,9 @@
       "planet": "Saturn in Leo",
       "thelemic_key": "The Battle for Life"
     },
-    "picture_reversed": "5_of_wands_reversed.jpg"
+    "picture_reversed": "5_of_wands_reversed.jpg",
+    "picture_width": 362,
+    "picture_height": 640
   },
   {
     "name": "Six of Wands",
@@ -1495,7 +1633,9 @@
       "planet": "Jupiter in Leo",
       "thelemic_key": "Energy Crowned with Victory"
     },
-    "picture_reversed": "6_of_wands_reversed.jpg"
+    "picture_reversed": "6_of_wands_reversed.jpg",
+    "picture_width": 373,
+    "picture_height": 640
   },
   {
     "name": "Seven of Wands",
@@ -1515,7 +1655,9 @@
       "planet": "Mars in Leo",
       "thelemic_key": "The Lion's Heart"
     },
-    "picture_reversed": "7_of_wands_reversed.jpg"
+    "picture_reversed": "7_of_wands_reversed.jpg",
+    "picture_width": 368,
+    "picture_height": 640
   },
   {
     "name": "Eight of Wands",
@@ -1535,7 +1677,9 @@
       "planet": "Mercury in Sagittarius",
       "thelemic_key": "The Arrows of Truth"
     },
-    "picture_reversed": "8_of_wands_reversed.jpg"
+    "picture_reversed": "8_of_wands_reversed.jpg",
+    "picture_width": 377,
+    "picture_height": 640
   },
   {
     "name": "Nine of Wands",
@@ -1555,7 +1699,9 @@
       "planet": "Moon in Sagittarius",
       "thelemic_key": "The Great Fortitude"
     },
-    "picture_reversed": "9_of_wands_reversed.jpg"
+    "picture_reversed": "9_of_wands_reversed.jpg",
+    "picture_width": 365,
+    "picture_height": 640
   },
   {
     "name": "Ten of Wands",
@@ -1575,7 +1721,9 @@
       "planet": "Saturn in Sagittarius",
       "thelemic_key": "The Burden of the Wise"
     },
-    "picture_reversed": "10_of_wands_reversed.jpg"
+    "picture_reversed": "10_of_wands_reversed.jpg",
+    "picture_width": 373,
+    "picture_height": 640
   },
   {
     "name": "Page of Wands",
@@ -1594,7 +1742,9 @@
       "element": "Earth of Fire",
       "thelemic_key": "The Phoenix Energy"
     },
-    "picture_reversed": "page_of_wands_reversed.jpg"
+    "picture_reversed": "page_of_wands_reversed.jpg",
+    "picture_width": 368,
+    "picture_height": 640
   },
   {
     "name": "Knight of Wands",
@@ -1613,7 +1763,9 @@
       "element": "Fire of Fire",
       "thelemic_key": "The Thunderbolt"
     },
-    "picture_reversed": "knight_of_wands_reversed.jpg"
+    "picture_reversed": "knight_of_wands_reversed.jpg",
+    "picture_width": 376,
+    "picture_height": 640
   },
   {
     "name": "Queen of Wands",
@@ -1632,7 +1784,9 @@
       "element": "Water of Fire",
       "thelemic_key": "The Solar Feminine"
     },
-    "picture_reversed": "queen_of_wands_reversed.jpg"
+    "picture_reversed": "queen_of_wands_reversed.jpg",
+    "picture_width": 378,
+    "picture_height": 640
   },
   {
     "name": "King of Wands",
@@ -1651,6 +1805,8 @@
       "element": "Air of Fire",
       "thelemic_key": "The Fiery Intellect"
     },
-    "picture_reversed": "king_of_wands_reversed.jpg"
+    "picture_reversed": "king_of_wands_reversed.jpg",
+    "picture_width": 364,
+    "picture_height": 640
   }
 ]

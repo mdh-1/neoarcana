@@ -57,3 +57,45 @@ def test_spread_slug_aliases():
     assert resolve_spread("celtic-cross") is SPREADS["celtic_cross"]
     assert resolve_spread("celtic_cross") is SPREADS["celtic_cross"]
     assert resolve_spread("bogus") is None
+
+
+def test_recorded_image_dimensions_match_the_files():
+    """The width/height in cards.json reserve layout space in the browser.
+    If the images are ever re-processed and the data is not regenerated,
+    every card would be laid out to the wrong box, so check them against
+    the files rather than trusting the record."""
+    import struct
+
+    from app.config import BASE_DIR
+
+    def jpeg_size(path):
+        with open(path, "rb") as f:
+            assert f.read(2) == b"\xff\xd8", path
+            while True:
+                b = f.read(1)
+                while b and b != b"\xff":
+                    b = f.read(1)
+                marker = f.read(1)
+                while marker == b"\xff":
+                    marker = f.read(1)
+                if marker[0] in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7,
+                                 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
+                    f.read(3)
+                    h, w = struct.unpack(">HH", f.read(4))
+                    return w, h
+                (length,) = struct.unpack(">H", f.read(2))
+                f.seek(length - 2, 1)
+
+    static = BASE_DIR / "static" / "tarot-images"
+    for card in load_deck():
+        recorded = (card.picture_width, card.picture_height)
+        assert jpeg_size(static / card.picture) == recorded, card.name
+        # the reversed face is the same box rotated; a mismatch would make
+        # reversed cards shift on load while upright ones did not
+        assert jpeg_size(static / card.picture_reversed) == recorded, card.name
+
+
+def test_every_card_declares_a_plausible_size():
+    for card in load_deck():
+        assert 300 < card.picture_width < 500, card.name
+        assert card.picture_height == 640, card.name

@@ -16,7 +16,8 @@
 
   {% macro cc_card(c) %}
   <figure class="cc-card" tabindex="0">
-    <img src="/static/tarot-images/{{ c.picture }}" alt="{{ c.display_name }}">
+    <img src="/static/tarot-images/{{ c.picture }}" alt="{{ c.display_name }}"
+         width="{{ c.picture_size[0] }}" height="{{ c.picture_size[1] }}">
     <figcaption>
       <div class="cc-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
       <div class="cc-name">{{ c.display_name }}</div>
@@ -40,8 +41,10 @@
       <div class="cc-above">{{ cc_card(c[4]) }}</div>
       <div class="cc-past">{{ cc_card(c[2]) }}</div>
       <div class="cc-center" tabindex="0">
-        <img class="cc-base" src="/static/tarot-images/{{ c[0].picture }}" alt="{{ c[0].display_name }}">
-        <img class="cc-crossing" src="/static/tarot-images/{{ c[1].picture }}" alt="{{ c[1].display_name }} (crossing)">
+        <img class="cc-base" src="/static/tarot-images/{{ c[0].picture }}" alt="{{ c[0].display_name }}"
+             width="{{ c[0].picture_size[0] }}" height="{{ c[0].picture_size[1] }}">
+        <img class="cc-crossing" src="/static/tarot-images/{{ c[1].picture }}" alt="{{ c[1].display_name }} (crossing)"
+             width="{{ c[1].picture_size[0] }}" height="{{ c[1].picture_size[1] }}">
         <figcaption>
           <div class="cc-pos">{{ roman[0] }} · {{ c[0].position_name }}</div>
           <div class="cc-name">{{ c[0].display_name }}</div>
@@ -92,6 +95,7 @@
     {% for c in reading.cards %}
     <figure class="plate" tabindex="0">
       <img src="/static/tarot-images/{{ c.picture }}" alt="{{ c.display_name }}"
+           width="{{ c.picture_size[0] }}" height="{{ c.picture_size[1] }}"
            {% if not loop.first %}loading="lazy"{% endif %}>
       <div class="tip" role="note">
         <div class="tip-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
