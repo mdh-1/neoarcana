@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 import time
 from collections import defaultdict, deque
 from pathlib import Path
@@ -8,6 +9,7 @@ from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from markupsafe import Markup, escape
 
 from .config import get_settings
 from .domain.deck import load_deck
@@ -35,6 +37,30 @@ def _asset_version(*names: str) -> str:
 app = FastAPI(title="Neoarcana", docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
+
+
+def _interpretation_html(text: str) -> Markup:
+    """Render a stored interpretation as paragraphs with bold leads.
+
+    The streaming path does this in reading.js as chunks arrive; without the
+    same treatment here, a completed reading rendered from storage showed
+    literal ** on every reload and every shared permalink, with the drop cap
+    landing on an asterisk.
+
+    Escaped before any markup is added: the text is model output, and the
+    prompt permits only **bold**, so nothing else should survive.
+    """
+    out = []
+    for para in re.split(r"\n\n+", text.strip()):
+        if not para.strip():
+            continue
+        safe = str(escape(para.strip()))
+        safe = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", safe, flags=re.S)
+        out.append(f"<p>{safe}</p>")
+    return Markup("".join(out))
+
+
+templates.env.filters["interpretation"] = _interpretation_html
 templates.env.globals["asset_v"] = _asset_version("style.css", "reading.js")
 
 load_deck()  # validate card data at startup, not first request

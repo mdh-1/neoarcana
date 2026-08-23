@@ -128,3 +128,24 @@ def test_second_stream_returns_stored_text_without_regenerating(client):
         "second stream mutated the stored interpretation"
     )
     assert stored.count("A note from the development deck") == 1
+
+
+def test_completed_reading_renders_bold_not_asterisks(client):
+    """The streaming path converts **bold** in reading.js; a reading loaded
+    from storage must produce the same HTML, or every reload and every
+    shared permalink shows literal asterisks with the drop cap on a `*`."""
+    reading_id = _draw(client, spread="one_card", question="")
+    client.get(f"/readings/{reading_id}/stream")   # complete it
+
+    html = client.get(f"/readings/{reading_id}").text
+    essay = html[html.index('id="essay"'):html.index("</div>", html.index('id="essay"'))]
+    assert "<strong>" in essay, "bold was not rendered server-side"
+    assert "**" not in essay, "literal asterisks leaked into the page"
+
+
+def test_interpretation_html_escapes_before_marking_up():
+    from app.main import _interpretation_html
+
+    out = str(_interpretation_html("<script>x</script> **bold**"))
+    assert "&lt;script&gt;" in out and "<script>" not in out
+    assert "<strong>bold</strong>" in out

@@ -117,7 +117,7 @@
   <div class="essay" id="essay"
        data-stream="{% if reading.status != 'complete' %}/readings/{{ reading.id }}/stream{% endif %}">
     {% if reading.status == 'complete' %}
-      {% for para in reading.interpretation.split('\n\n') %}<p>{{ para }}</p>{% endfor %}
+      {{ reading.interpretation | interpretation }}
     {% else %}
       <p class="pending">The cards are on the table. Reading them now<span class="ellip">&hellip;</span></p>
     {% endif %}
