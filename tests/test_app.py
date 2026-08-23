@@ -95,3 +95,13 @@ def test_head_is_answered_like_get(client, path):
     assert head.status_code == get.status_code == 200, path
     assert head.headers["content-type"] == get.headers["content-type"], path
     assert head.content == b""
+
+
+def test_hint_offers_both_hover_and_tap(client):
+    """Touch devices have no hover but can focus a card; the hint used to be
+    hidden entirely on touch, leaving the tooltips undiscoverable there."""
+    r = client.post("/readings", data={"spread_key": "celtic_cross", "question": ""},
+                    follow_redirects=False)
+    html = client.get(r.headers["location"]).text
+    assert 'class="hint-hover">Hover<' in html
+    assert 'class="hint-tap">Tap<' in html

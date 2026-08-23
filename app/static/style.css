@@ -100,7 +100,14 @@ button:hover { background: var(--oxblood); border-color: var(--oxblood); }
 .plates { display: grid; gap: 40px; margin-bottom: 70px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 .plates-1 { max-width: 300px; }
 .plates-3 { grid-template-columns: repeat(3, 1fr); }
-@media (max-width: 640px) { .plates-3 { grid-template-columns: 1fr 1fr; } }
+/* One column on phones. Two columns left the three-card spread as 2 + 1,
+   which reads as a group and a straggler rather than past/present/future.
+   Stacked full width, the order is unambiguous and the art is legible. */
+@media (max-width: 640px) {
+  .plates, .plates-3 { grid-template-columns: 1fr; gap: 34px; }
+  .plate img { max-width: 320px; margin: 0 auto; }
+  .plate figcaption { max-width: 320px; margin-left: auto; margin-right: auto; }
+}
 /* Positioning context for the hover panel. Plates sit in a row, and the
    panel is wider than a plate, so it opens upward and centred; the panel's
    pointer-events:none means the fade-in never steals the hover. */
@@ -201,12 +208,19 @@ svg.el {
 /* The plates index below carries the same text, so this is an aid rather
    than the only route to it: touch devices, which have no hover, lose
    nothing. Keyboard users reach it through tabindex + :focus-within. */
-.hover-hint {
-  display: none;
+/* Touch devices have no hover, but the cards are focusable, so a tap opens
+   the same panel. The hint was previously hidden outright on touch, which
+   left the whole feature undiscoverable on a phone: it now says "Tap". */
+.hint {
   font-family: var(--sans); font-size: 12px; letter-spacing: .06em;
   color: var(--ink-mid); text-align: center; margin-bottom: 18px;
 }
-@media (hover: hover) { .hover-hint { display: block; } }
+.hint-hover { display: none; }
+.hint-tap { display: inline; }
+@media (hover: hover) {
+  .hint-hover { display: inline; }
+  .hint-tap { display: none; }
+}
 
 .tip {
   position: absolute;
@@ -257,6 +271,21 @@ svg.el {
    focus can, and it must not land off-screen when it does. */
 @media (max-width: 640px) {
   .plate .tip { left: 0; right: 0; width: auto; transform: none; }
+}
+
+/* The cross packs ten cards into a narrow screen, so a panel anchored to a
+   ~100px card hangs off the edge whichever way it opens: the outer columns
+   overflow sideways, the staff's leftward panel overflows once the staff
+   wraps. Below 860px, anchor to the viewport instead. Same panel, always
+   fully visible, and it overrides the .cc-above / .cc-staff placements
+   because it comes after them at equal specificity. */
+@media (max-width: 860px) {
+  .cc-card .tip, .cc-center .tip {
+    position: fixed;
+    left: 14px; right: 14px; bottom: 14px;
+    top: auto; width: auto; transform: none;
+    box-shadow: 0 -6px 30px -8px rgba(25, 23, 20, .35);
+  }
 }
 
 /* ---------- interpretation essay ---------- */
