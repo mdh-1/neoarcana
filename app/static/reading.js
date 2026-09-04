@@ -36,3 +36,9 @@
     }
   };
 })();
+
+// A card's tooltip opens on focus (click or tap) and closes when focus
+// leaves. Escape is the other thing people try, so honour it.
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" && document.activeElement) document.activeElement.blur();
+});

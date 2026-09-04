@@ -111,7 +111,7 @@ button:hover { background: var(--oxblood); border-color: var(--oxblood); }
 /* Positioning context for the hover panel. Plates sit in a row, and the
    panel is wider than a plate, so it opens upward and centred; the panel's
    pointer-events:none means the fade-in never steals the hover. */
-.plate { position: relative; }
+.plate { position: relative; cursor: pointer; }
 .plate img {
   /* height:auto is required now the tags carry width/height: without it the
      attribute fixes the box and every card renders squashed. */
@@ -143,7 +143,7 @@ summary:hover { color: var(--oxblood); }
 .cc-future { grid-column: 3; grid-row: 2; }
 .cc-below  { grid-column: 2; grid-row: 3; }
 
-.cc-card { width: 100%; max-width: 148px; text-align: center; margin: 0; position: relative; }
+.cc-card { width: 100%; max-width: 148px; text-align: center; margin: 0; position: relative; cursor: pointer; }
 .cc-card img, .cc-center img {
   display: block; width: 100%; height: auto; border-radius: 3px;
   box-shadow: 0 1px 3px rgba(25,23,20,.2), 0 12px 28px -18px rgba(25,23,20,.45);
@@ -155,7 +155,7 @@ summary:hover { color: var(--oxblood); }
 .cc-name { font-size: 14px; line-height: 1.3; }
 
 /* The Present, crossed by The Challenge */
-.cc-center { position: relative; text-align: center; }
+.cc-center { position: relative; text-align: center; cursor: pointer; }
 .cc-center .cc-crossing {
   position: absolute; top: 0; left: 0; width: 100%;
   /* same box as the base card, so centers coincide; shrink so it reads as laid across */
@@ -217,10 +217,10 @@ svg.el {
   font-family: var(--sans); font-size: 12px; letter-spacing: .06em;
   color: var(--ink-mid); text-align: center; margin-bottom: 18px;
 }
-.hint-hover { display: none; }
+.hint-click { display: none; }
 .hint-tap { display: inline; }
 @media (hover: hover) {
-  .hint-hover { display: inline; }
+  .hint-click { display: inline; }
   .hint-tap { display: none; }
 }
 
@@ -241,9 +241,13 @@ svg.el {
   transition: opacity .15s ease;
   pointer-events: none;   /* never steals the hover from the card */
 }
-.cc-card:hover .tip, .cc-card:focus-within .tip,
-.cc-center:hover .tip, .cc-center:focus-within .tip,
-.plate:hover .tip, .plate:focus-within .tip {
+/* Focus only, no hover. The cards carry tabindex, so a click on a desktop
+   and a tap on a phone both focus them: one deliberate gesture everywhere,
+   and nothing pops up because the mouse happened to cross the spread.
+   Escape (reading.js) or a click elsewhere dismisses it. */
+.cc-card:focus-within .tip,
+.cc-center:focus-within .tip,
+.plate:focus-within .tip {
   opacity: 1;
   visibility: visible;
 }
