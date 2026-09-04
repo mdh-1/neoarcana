@@ -45,5 +45,5 @@ def test_current_model_defaults():
     deepseek-chat and grok-3-mini both retired in 2026 — model IDs rot."""
     s = Settings(_env_file=None)
     assert s.deepseek_model == "deepseek-v4-flash"
-    assert s.gemini_model == "gemini-3.5-flash-lite"
+    assert s.gemini_model == "gemini-3.8-flash"  # chosen by experiment, Sept 2026
     assert s.mistral_model == "mistral-small-latest"

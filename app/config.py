@@ -28,7 +28,10 @@ class Settings(BaseSettings):
     # (deepseek-chat and grok-3-mini both died in 2026), the fix is a
     # .env edit, not a deploy.
     deepseek_model: str = "deepseek-v4-flash"
-    gemini_model: str = "gemini-3.5-flash-lite"  # 2.5 is closed to new API users
+    # 3.8-flash over 3.5-flash-lite after a side-by-side on the same cards and
+    # question (Sept 2026): the only tier that leaned, saw the real pattern
+    # and did not invent a false one. Also faster than 3.5-flash, oddly.
+    gemini_model: str = "gemini-3.8-flash"
     mistral_model: str = "mistral-small-latest"
 
     # Canonical origin, used for <link rel=canonical>, og:url and the

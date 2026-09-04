@@ -119,3 +119,21 @@ def test_sitemap_lists_the_public_pages_only(client):
     xml = client.get("/sitemap.xml").text
     assert "/faq" in xml and "/ask/celtic_cross" in xml
     assert "/readings/" not in xml
+
+
+def test_prompt_asks_for_a_view_but_guards_against_invented_patterns():
+    """A side-by-side experiment (Sept 2026) showed the old prompt produced
+    the same platitude on every model, and a first revision asking for
+    patterns made three of four models invent an elemental pattern that was
+    not in the cards. Both halves of the fix live in the prompt text."""
+    from app.services.reading import SYSTEM_PROMPT
+
+    # asks for a view
+    assert "Say which way the spread leans" in SYSTEM_PROMPT
+    assert "Do not describe it back to them" in SYSTEM_PROMPT
+    # guards against confabulation
+    assert "Name a pattern only when it is actually there" in SYSTEM_PROMPT
+    assert "must be true of every card in it" in SYSTEM_PROMPT
+    # the phrase that triggered the hallucination is gone
+    assert "shift from one element to the next" not in SYSTEM_PROMPT
+
