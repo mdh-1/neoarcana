@@ -1,20 +1,26 @@
 {% extends "base.html" %}
 {% block description %}Free tarot readings: one card, three cards, or the full Celtic Cross. A deck shuffled by {% if random_org %}atmospheric noise{% else %}cryptographic randomness{% endif %}, read closely, and set down in clear prose.{% endblock %}
 {% block content %}
-<header class="hero">
+<header class="hero hero-home">
   <div class="kicker">A tarot reading, plainly given</div>
-  <h1>Seventy&#8209;eight cards. One answer.</h1>
+  <h1>Seventy&#8209;eight cards.<br>One answer.</h1>
   <p class="standfirst">A deck shuffled by
   {% if random_org %}atmospheric noise{% else %}cryptographic randomness{% endif %}.
   Choose a spread to begin.</p>
+  <figure class="door-card">
+    <img src="/static/tarot-images/{{ door_card.picture }}"
+         alt="The Fool: a traveller in a flowered tunic at the edge of a cliff, a white rose in one hand, a small dog at the heel"
+         width="{{ door_card.picture_width }}" height="{{ door_card.picture_height }}">
+    <figcaption>{{ door_card.name }}</figcaption>
+  </figure>
 </header>
 
-<section class="index">
+<section class="index" aria-label="The spreads">
   {% for spread in spreads %}
   <a class="row" href="/ask/{{ spread.key }}">
     <span class="no">{{ "%02d"|format(loop.index) }}</span>
-    <span><h3>{{ spread.title }}</h3><span class="desc">{{ spread.tagline }}</span></span>
-    <span class="go">&rarr;</span>
+    <div class="row-text"><h2>{{ spread.title }}</h2> <p class="desc">{{ spread.tagline }}</p></div>
+    <span class="go" aria-hidden="true">&rarr;</span>
   </a>
   {% endfor %}
 </section>

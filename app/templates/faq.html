@@ -1,13 +1,19 @@
 {% extends "base.html" %}
-{% block title %}About the deck · Neoarcana{% endblock %}
+{% block title %}How it works · Neoarcana{% endblock %}
 {% block description %}How Neoarcana draws its cards, who writes the interpretations, and what happens to your question.{% endblock %}
 {% block content %}
 <header class="hero hero-small">
-  <div class="kicker">About the deck</div>
+  <div class="kicker">How it works</div>
   <h1>Fair questions, plainly answered.</h1>
 </header>
 
 <section class="essay faq-essay">
+  <h2>What is a spread?</h2>
+  <p>The layout the cards are dealt into. Each place in it has a meaning of
+  its own, such as the past or the challenge, and a card is read in the light
+  of where it falls. One card answers quickly. The Celtic Cross, with ten,
+  looks at a question from every side.</p>
+
   <h2>How are the cards drawn?</h2>
   {% if random_org %}
   <p>With atmospheric noise. Each shuffle requests random numbers from
@@ -27,17 +33,43 @@
   The card meanings shown beneath each plate are traditional Rider–Waite and
   Thoth attributions, held in our own deck data.</p>
 
-  <h2>Can a reversed card appear?</h2>
-  <p>Yes. Every card, including The Fool, has an equal and independent
-  chance of arriving reversed.</p>
+  <h2>What does a reversed card mean?</h2>
+  <p>A card that arrives upside down is reversed, and it is shown that way.
+  It is read as the same card with its energy blocked, turned inward or in
+  excess, not as a bad omen. Every card, including The Fool, has an equal
+  and independent chance of arriving reversed.</p>
+
+  <h2>What are the small words under each card?</h2>
+  <p>Its traditional correspondences: an element, and often a planet, a sign
+  of the zodiac or a Hebrew letter. They colour how a card is read. You do
+  not need them to follow the reading.</p>
+
+  <h2>What if I draw a frightening card?</h2>
+  <p>Death, The Tower and the Swords look worse than they read. Death is an
+  ending that makes room, not a death. No card here foretells illness, loss
+  or harm, and the reading will not either.</p>
 
   <h2>Is this fortune-telling?</h2>
-  <p>A spread is a mirror, not a window, this is for you to decide. Readings are no
-  substitute for professional advice.</p>
+  <p>A spread is a mirror, not a window. This is for you to decide. Readings
+  are no substitute for professional advice.</p>
+
+  <h2 id="serious">What if my question is about something serious?</h2>
+  <p>Ask it, if it helps to see it written down, but do not let a reading
+  stand in for a person. For health, money or the law, see someone qualified.</p>
+  <p>If you are in danger from someone, or thinking of harming yourself,
+  please talk to someone now. In Ireland and the UK the Samaritans answer at
+  <a href="tel:116123">116 123</a>, at any hour. In Ireland, Women's Aid
+  answers at <a href="tel:1800341900">1800 341 900</a>. Elsewhere,
+  <a href="https://findahelpline.com" rel="noopener">findahelpline.com</a>
+  lists services by country.</p>
 
   <h2>What happens to my question?</h2>
-  <p>It is sent to the interpreting model along with the drawn cards, kept
-  briefly in memory so your reading's page keeps working, and not written to
-  any database.</p>
+  <p>It is sent, with the cards drawn, to the company that runs the language
+  model, and it is stored here with your reading so that the reading's link
+  keeps working. Anyone who has that link can open it, so share it as you
+  would the question itself.</p>
+  <p>There are no accounts and no cookies. The web server keeps ordinary
+  access logs for fourteen days. Only the most recent few thousand readings
+  are kept, and older ones are deleted as new ones arrive.</p>
 </section>
 {% endblock %}

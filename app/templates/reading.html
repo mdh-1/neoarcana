@@ -4,54 +4,76 @@
 {% block title %}Your reading · Neoarcana{% endblock %}
 {% block content %}
 {% set roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X"] %}
-<section class="reading">
-  <div class="reading-kicker">Reading {{ reading.id }} · {{ reading.spread.title }}
+{% set cross = reading.spread.key == "celtic_cross" %}
+{% set done = reading.status == "complete" %}
+<article class="reading">
+  <div class="reading-kicker">{{ reading.spread.title }}
     {%- if reading.entropy_source == "random.org" %} · shuffled by atmospheric noise
     {%- else %} · shuffled by cryptographic randomness{% endif %}</div>
   {% if reading.question %}
-  <p class="question">&ldquo;{{ reading.question }}&rdquo;</p>
+  <h1 class="question{% if reading.question|length > 140 %} question-long{% endif %}">&ldquo;{{ reading.question }}&rdquo;</h1>
   {% else %}
-  <p class="question quiet-question">A general reading. No question asked.</p>
+  <h1 class="question quiet-question">A general reading. No question asked.</h1>
   {% endif %}
 
+  {# The cards take several screens on a phone, and the reading comes after
+     them. This says it is on its way, and is the way to it. #}
+  <p class="status"><a id="reading-status" href="#essay" role="status"
+     data-done="The reading is written. Go to it"
+     data-lost="The reading was interrupted. Go to it">
+     {%- if done %}Go to the reading{% else %}The reading is being written. Go to it{% endif %}</a></p>
+
+  {# One card of the cross: a button that opens its panel. #}
   {% macro cc_card(c) %}
-  <figure class="cc-card" tabindex="0">
-    <img src="/static/tarot-images/{{ c.picture }}" alt="{{ c.display_name }}"
-         width="{{ c.picture_size[0] }}" height="{{ c.picture_size[1] }}">
+  <figure class="cc-card">
+    <button type="button" class="card-btn" aria-expanded="false" aria-controls="tip-{{ c.position }}">
+      <img src="/static/tarot-images/{{ c.picture }}" alt="{{ c.display_name }}"
+           width="{{ c.picture_size[0] }}" height="{{ c.picture_size[1] }}">
+    </button>
     <figcaption>
       <div class="cc-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
       <div class="cc-name">{{ c.display_name }}</div>
     </figcaption>
-    <div class="tip" role="note">
+    <div class="tip" id="tip-{{ c.position }}" hidden>
       <div class="tip-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
       <div class="tip-name">{{ c.display_name }}</div>
       {{ correspondences(c) }}
       <p class="tip-meaning">{{ c.meaning }}</p>
       <p class="tip-desc">{{ c.position_description }}</p>
+      {{ tip_close() }}
     </div>
   </figure>
   {% endmacro %}
 
-  <p class="hint"><span class="hint-click">Click</span><span class="hint-tap">Tap</span> a card for its meaning.</p>
+  {% macro tip_close() %}
+  <button type="button" class="tip-close" aria-label="Close">
+    <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+  </button>
+  {% endmacro %}
 
-  {% if reading.spread.key == "celtic_cross" %}
+  <div class="reading-body reading-body-{{ 'cross' if cross else reading.cards|length }}">
+  <div class="spread">
+  {% if cross %}
   {% set c = reading.cards %}
+  <p class="hint" hidden>Select a card for its meaning.</p>
+  {# Source order follows the order the cards are read, I to X. The grid
+     places them; the staff is stacked bottom to top, as it is dealt. #}
   <div class="cc">
     <div class="cc-cross">
-      <div class="cc-above">{{ cc_card(c[4]) }}</div>
-      <div class="cc-past">{{ cc_card(c[2]) }}</div>
-      <div class="cc-center" tabindex="0">
-        <img class="cc-base" src="/static/tarot-images/{{ c[0].picture }}" alt="{{ c[0].display_name }}"
-             width="{{ c[0].picture_size[0] }}" height="{{ c[0].picture_size[1] }}">
-        <img class="cc-crossing" src="/static/tarot-images/{{ c[1].picture }}" alt="{{ c[1].display_name }} (crossing)"
-             width="{{ c[1].picture_size[0] }}" height="{{ c[1].picture_size[1] }}">
+      <figure class="cc-center">
+        <button type="button" class="card-btn" aria-expanded="false" aria-controls="tip-1">
+          <img class="cc-base" src="/static/tarot-images/{{ c[0].picture }}" alt="{{ c[0].display_name }}"
+               width="{{ c[0].picture_size[0] }}" height="{{ c[0].picture_size[1] }}">
+          <img class="cc-crossing" src="/static/tarot-images/{{ c[1].picture }}" alt="crossed by {{ c[1].display_name }}"
+               width="{{ c[1].picture_size[0] }}" height="{{ c[1].picture_size[1] }}">
+        </button>
         <figcaption>
           <div class="cc-pos">{{ roman[0] }} · {{ c[0].position_name }}</div>
           <div class="cc-name">{{ c[0].display_name }}</div>
           <div class="cc-pos">{{ roman[1] }} · {{ c[1].position_name }}, crossing</div>
           <div class="cc-name">{{ c[1].display_name }}</div>
         </figcaption>
-        <div class="tip" role="note">
+        <div class="tip" id="tip-1" hidden>
           <div class="tip-pos">{{ roman[0] }} · {{ c[0].position_name }}</div>
           <div class="tip-name">{{ c[0].display_name }}</div>
           {{ correspondences(c[0]) }}
@@ -60,50 +82,28 @@
           <div class="tip-name">{{ c[1].display_name }}</div>
           {{ correspondences(c[1]) }}
           <p class="tip-meaning">{{ c[1].meaning }}</p>
+          {{ tip_close() }}
         </div>
-      </div>
+      </figure>
+      <div class="cc-past">{{ cc_card(c[2]) }}</div>
       <div class="cc-future">{{ cc_card(c[3]) }}</div>
+      <div class="cc-above">{{ cc_card(c[4]) }}</div>
       <div class="cc-below">{{ cc_card(c[5]) }}</div>
     </div>
     <div class="cc-staff">
-      {{ cc_card(c[9]) }}
-      {{ cc_card(c[8]) }}
-      {{ cc_card(c[7]) }}
       {{ cc_card(c[6]) }}
+      {{ cc_card(c[7]) }}
+      {{ cc_card(c[8]) }}
+      {{ cc_card(c[9]) }}
     </div>
   </div>
-
-  <section class="cc-index">
-    <div class="kicker">The plates</div>
-    {% for c in reading.cards %}
-    <div class="pos-row">
-      <span class="no">{{ "%02d"|format(c.position) }}</span>
-      <div>
-        <strong>{{ c.position_name }}</strong> · {{ c.display_name }}
-        {{ correspondences(c) }}
-        <p>{{ c.meaning }}</p>
-        <details>
-          <summary>This position</summary>
-          <p>{{ c.position_description }}</p>
-        </details>
-      </div>
-    </div>
-    {% endfor %}
-  </section>
   {% else %}
   <div class="plates plates-{{ reading.cards|length }}">
     {% for c in reading.cards %}
-    <figure class="plate" tabindex="0">
+    <figure class="plate">
       <img src="/static/tarot-images/{{ c.picture }}" alt="{{ c.display_name }}"
            width="{{ c.picture_size[0] }}" height="{{ c.picture_size[1] }}"
            {% if not loop.first %}loading="lazy"{% endif %}>
-      <div class="tip" role="note">
-        <div class="tip-pos">{{ roman[c.position - 1] }} · {{ c.position_name }}</div>
-        <div class="tip-name">{{ c.display_name }}</div>
-        {{ correspondences(c) }}
-        <p class="tip-meaning">{{ c.meaning }}</p>
-        <p class="tip-desc">{{ c.position_description }}</p>
-      </div>
       <figcaption>
         <div class="plate-no">Plate {{ roman[c.position - 1] }} · {{ c.position_name }}</div>
         <div class="plate-name">{{ c.display_name }}</div>
@@ -118,20 +118,50 @@
     {% endfor %}
   </div>
   {% endif %}
+  </div>
 
-  <div class="essay" id="essay"
-       data-stream="{% if reading.status != 'complete' %}/readings/{{ reading.id }}/stream{% endif %}">
-    {% if reading.status == 'complete' %}
-      {{ reading.interpretation | interpretation }}
-    {% else %}
-      <p class="pending">The cards are on the table. Reading them now<span class="ellip">&hellip;</span></p>
+  <div class="reading-text">
+    <div class="essay" id="essay" tabindex="-1"
+         data-stream="{% if not done %}/readings/{{ reading.id }}/stream{% endif %}">
+      {% if done %}
+        {{ reading.interpretation | interpretation }}
+      {% else %}
+        <p class="pending">The cards are on the table. Reading them now<span class="ellip">&hellip;</span></p>
+        <noscript><p class="pending">The reading is written as you watch, which needs
+        JavaScript. Turn it on and reload the page.</p></noscript>
+      {% endif %}
+    </div>
+
+    <p class="closing" id="closing"{% if not done %} hidden{% endif %}>Offered for reflection, not instruction.
+    What you do next is yours to decide.
+    <a href="/faq#serious">If the question is a heavy one, start here.</a></p>
+
+    {% if cross %}
+    {# Reference, not the reading: it used to stand between the cards and
+       the essay, some three thousand pixels of it on a phone. #}
+    <details class="cc-index">
+      <summary>The ten cards, one by one</summary>
+      {% for c in reading.cards %}
+      <div class="pos-row">
+        <span class="no">{{ "%02d"|format(c.position) }}</span>
+        <div>
+          <strong>{{ c.position_name }}</strong> · {{ c.display_name }}
+          {{ correspondences(c) }}
+          <p>{{ c.meaning }}</p>
+          <p class="pos-desc">{{ c.position_description }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </details>
     {% endif %}
-  </div>
 
-  <div class="again">
-    <a class="quiet" href="/ask/{{ reading.spread.key }}">Draw again</a>
-    <a class="quiet" href="/">Different spread</a>
+    <div class="again">
+      <a class="btn btn-ghost" href="/ask/{{ reading.spread.key }}">Ask another question</a>
+      <button type="button" class="quiet link-btn" data-copy data-copied="Link copied" hidden>Copy the link to this reading</button>
+      <a class="quiet" href="/">Different spread</a>
+    </div>
   </div>
-</section>
-<script src="/static/reading.js?v={{ asset_v }}"></script>
+  </div>
+</article>
 {% endblock %}
+{% block scripts %}<script src="/static/reading.js?v={{ asset_v }}"></script>{% endblock %}

@@ -23,13 +23,16 @@
   {% block head_extra %}{% endblock %}
 </head>
 <body>
+  <a class="skip" href="#main">Skip to the page</a>
   <div class="wrap">
-    <nav class="masthead">
+    <nav class="masthead" aria-label="Site">
       <a class="brand" href="/">Neoarcana</a>
-      <a href="/faq">About the deck</a>
+      <a href="/faq">How it works</a>
     </nav>
 
+    <main id="main">
     {% block content %}{% endblock %}
+    </main>
 
     <footer>
       {% if random_org %}<span>Shuffled with atmospheric noise · <a href="https://www.random.org" rel="noopener">random.org</a></span>
@@ -37,5 +40,6 @@
       <span>Offered for reflection</span>
     </footer>
   </div>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -12,16 +12,26 @@
 <form class="ask" method="post" action="/readings">
   <input type="hidden" name="spread_key" value="{{ spread.key }}">
   <label class="kicker" for="question">Your question (optional)</label>
-  <input id="question" name="question" type="text" maxlength="500"
-         placeholder="Should I take the new role?" autofocus autocomplete="off">
+  {# A textarea, so a long question can be seen whole while it is written.
+     It grows with its content where the browser allows (field-sizing). #}
+  <textarea id="question" name="question" rows="2" maxlength="500"
+            placeholder="What am I not seeing about the new role?"
+            autocomplete="off"></textarea>
   <div class="ask-actions">
-    <button type="submit">Draw the cards</button>
+    <button class="btn" type="submit" data-busy="Drawing&hellip;">Draw the cards</button>
     <a class="quiet" href="/">Choose a different spread</a>
   </div>
 </form>
 
+{% if spread.positions|length > 4 %}
+{# Ten definitions before a single card is drawn is a lot to hold. They are
+   one press away here, and beside each card once the spread is laid. #}
+<details class="positions">
+  <summary>The ten positions of this spread</summary>
+{% else %}
 <section class="positions">
-  <div class="kicker">The positions</div>
+  <h2 class="kicker">The positions</h2>
+{% endif %}
   {% for p in spread.positions %}
   <div class="pos-row">
     <span class="no">{{ "%02d"|format(p.position) }}</span>
@@ -29,5 +39,6 @@
       <p>{{ p.description }}</p></div>
   </div>
   {% endfor %}
-</section>
+{% if spread.positions|length > 4 %}</details>{% else %}</section>{% endif %}
 {% endblock %}
+{% block scripts %}<script src="/static/ask.js?v={{ asset_v }}"></script>{% endblock %}

@@ -1,3 +1,4 @@
+from app.services import reading as reading_service
 """Route smoke tests. No API keys configured in tests, so entropy is the
 OS CSPRNG and the interpreter is the mock provider — full offline run."""
 
@@ -24,7 +25,7 @@ def test_index_lists_spreads(client):
 def test_ask_page(client):
     r = client.get("/ask/celtic_cross")
     assert r.status_code == 200
-    assert "The positions" in r.text
+    assert "positions" in r.text
     assert client.get("/ask/nope").status_code == 404
 
 
@@ -97,12 +98,66 @@ def test_head_is_answered_like_get(client, path):
     assert head.content == b""
 
 
-def test_hint_offers_both_click_and_tap(client):
-    """Tooltips open on focus only: click on a desktop, tap on a phone. The
-    hint names whichever gesture applies. Hover was dropped on purpose, so
-    nothing appears just because the mouse crossed the spread."""
-    r = client.post("/readings", data={"spread_key": "celtic_cross", "question": ""},
+def _reading_html(client, spread):
+    r = client.post("/readings", data={"spread_key": spread, "question": ""},
                     follow_redirects=False)
-    html = client.get(r.headers["location"]).text
-    assert 'class="hint-click">Click<' in html
-    assert 'class="hint-tap">Tap<' in html
+    return client.get(r.headers["location"]).text
+
+
+def test_cross_cards_are_buttons_that_open_a_panel(client):
+    """On the Celtic Cross a card has room for its name and little else, so
+    each opens a panel. The trigger is a real button that says whether its
+    panel is open: the focusable figure it replaced announced nothing to a
+    screen reader. Ten cards, nine triggers (I and II share the centre)."""
+    html = _reading_html(client, "celtic_cross")
+    assert html.count('class="card-btn" aria-expanded="false"') == 9
+    assert html.count('class="tip" id="tip-') == 9
+    assert html.count('class="tip-close" aria-label="Close"') == 9
+    assert "tabindex=\"0\"" not in html
+
+
+def test_plates_carry_no_panel(client):
+    """One and three card spreads print the meaning under the card. A panel
+    there repeated it, and covered the question or the next caption."""
+    for spread in ("one_card", "three_card"):
+        html = _reading_html(client, spread)
+        assert 'class="tip"' not in html, spread
+        assert "card-btn" not in html, spread
+        assert "Select a card" not in html, spread
+
+
+def test_reading_page_has_a_heading_and_a_way_to_the_reading(client):
+    """The question is the page's heading, and a link under it leads to the
+    essay: on a phone the cards fill several screens before it."""
+    html = _reading_html(client, "celtic_cross")
+    assert '<h1 class="question' in html
+    assert 'id="reading-status" href="#essay"' in html
+    assert "<main" in html
+
+
+def test_reference_follows_the_reading(client):
+    """The card-by-card index is reference. It stood between the cards and
+    the essay; it now comes after, closed."""
+    html = _reading_html(client, "celtic_cross")
+    assert html.index('id="essay"') < html.index('class="cc-index"')
+    assert '<details class="cc-index">' in html
+
+
+def test_unknown_page_gets_the_themed_error_not_json(client):
+    r = client.get("/nowhere")
+    assert r.status_code == 404
+    assert "text/html" in r.headers["content-type"]
+    assert "not in the deck" in r.text
+    # programs still get JSON
+    api = client.get("/api/v1/readings/nonexistent")
+    assert api.status_code == 404 and "application/json" in api.headers["content-type"]
+
+
+def test_question_is_stored_as_one_line(client):
+    """The form is a textarea now, and a newline would break the quoted line
+    the question occupies in the prompt."""
+    r = client.post("/readings", data={"spread_key": "one_card",
+                                       "question": "first line\nsecond   line"},
+                    follow_redirects=False)
+    rid = r.headers["location"].rsplit("/", 1)[1]
+    assert reading_service.store.get(rid).question == "first line second line"

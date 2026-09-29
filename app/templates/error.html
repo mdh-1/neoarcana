@@ -3,8 +3,8 @@
 {% block content %}
 <header class="hero">
   <div class="kicker">A brief interruption</div>
-  <h1>The cards decline, politely.</h1>
+  <h1>{{ headline | default("The cards decline, politely.") }}</h1>
   <p class="standfirst">{{ message }}</p>
-  <p class="standfirst"><a href="/">&larr; Back to the spreads</a></p>
+  <p class="standfirst"><a href="/">Back to the spreads</a></p>
 </header>
 {% endblock %}

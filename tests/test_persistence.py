@@ -130,17 +130,30 @@ def test_second_stream_returns_stored_text_without_regenerating(client):
     assert stored.count("A note from the development deck") == 1
 
 
-def test_completed_reading_renders_bold_not_asterisks(client):
-    """The streaming path converts **bold** in reading.js; a reading loaded
-    from storage must produce the same HTML, or every reload and every
-    shared permalink shows literal asterisks with the drop cap on a `*`."""
+def test_completed_reading_renders_markup_not_asterisks(client):
+    """The streaming path turns the model's ** into markup in reading.js; a
+    reading loaded from storage must produce the same HTML, or every reload
+    and every shared permalink shows literal asterisks."""
     reading_id = _draw(client, spread="one_card", question="")
     client.get(f"/readings/{reading_id}/stream")   # complete it
 
     html = client.get(f"/readings/{reading_id}").text
     essay = html[html.index('id="essay"'):html.index("</div>", html.index('id="essay"'))]
-    assert "<strong>" in essay, "bold was not rendered server-side"
+    assert 'class="card-label"' in essay or "<strong>" in essay, "markup was not rendered server-side"
     assert "**" not in essay, "literal asterisks leaked into the page"
+
+
+def test_leading_label_becomes_a_heading():
+    """Each card's passage opens with a bold label. As a heading it gives a
+    long reading structure, and keeps the drop cap off the label."""
+    from app.main import _interpretation_html
+
+    out = str(_interpretation_html(
+        "**Past · IX The Hermit.** You withdrew, and it was **wise**.\n\n"
+        "**The thread.** It holds."))
+    assert '<h2 class="card-label">Past · IX The Hermit</h2>' in out
+    assert "<p>You withdrew, and it was <strong>wise</strong>.</p>" in out
+    assert '<h2 class="card-label">The thread</h2><p>It holds.</p>' in out
 
 
 def test_interpretation_html_escapes_before_marking_up():

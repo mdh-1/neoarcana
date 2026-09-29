@@ -6,6 +6,7 @@ from collections import defaultdict, deque
 from pathlib import Path
 
 from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import (
     FileResponse,
     HTMLResponse,
@@ -15,6 +16,7 @@ from fastapi.responses import (
     StreamingResponse,
 )
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.templating import Jinja2Templates
 from markupsafe import Markup, escape
 
@@ -47,28 +49,38 @@ templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 
 def _interpretation_html(text: str) -> Markup:
-    """Render a stored interpretation as paragraphs with bold leads.
+    """Render a stored interpretation: a heading per card, then its prose.
 
-    The streaming path does this in reading.js as chunks arrive; without the
-    same treatment here, a completed reading rendered from storage showed
-    literal ** on every reload and every shared permalink, with the drop cap
-    landing on an asterisk.
+    The model opens each paragraph with a bold label ("**Past · IX The
+    Hermit.**"). Left inline, eleven paragraphs of a Celtic Cross had no
+    structure a screen reader could move through, and the drop cap landed on
+    the label instead of the prose. The label becomes a heading; bold
+    anywhere else stays bold. reading.js does the same as chunks arrive, so
+    a reading looks identical streamed and reloaded.
 
     Escaped before any markup is added: the text is model output, and the
     prompt permits only **bold**, so nothing else should survive.
     """
     out = []
     for para in re.split(r"\n\n+", text.strip()):
-        if not para.strip():
+        para = para.strip()
+        if not para:
             continue
-        safe = str(escape(para.strip()))
+        lead = re.match(r"\*\*(.+?)\*\*\s*(.*)\Z", para, flags=re.S)
+        if lead:
+            label = str(escape(lead.group(1).strip().rstrip(".")))
+            out.append(f'<h2 class="card-label">{label}</h2>')
+            para = lead.group(2).strip()
+            if not para:
+                continue
+        safe = str(escape(para))
         safe = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", safe, flags=re.S)
         out.append(f"<p>{safe}</p>")
     return Markup("".join(out))
 
 
 templates.env.filters["interpretation"] = _interpretation_html
-templates.env.globals["asset_v"] = _asset_version("style.css", "reading.js")
+templates.env.globals["asset_v"] = _asset_version("style.css", "reading.js", "ask.js")
 templates.env.globals["site_url"] = get_settings().site_url.rstrip("/")
 
 load_deck()  # validate card data at startup, not first request
@@ -89,6 +101,19 @@ async def _answer_head_requests(request: Request, call_next):
     request.scope["method"] = "GET"
     response = await call_next(request)
     return Response(status_code=response.status_code, headers=dict(response.headers))
+
+
+@app.exception_handler(StarletteHTTPException)
+async def _http_error(request: Request, exc: StarletteHTTPException):
+    """A mistyped address used to return raw {"detail":"Not Found"}. People
+    get the themed page; the JSON API and the event stream keep JSON, since
+    their callers are programs."""
+    path = request.url.path
+    if path.startswith("/api/") or path.endswith("/stream") or exc.status_code != 404:
+        return await http_exception_handler(request, exc)
+    return _page(request, "error.html", status_code=404,
+                 headline="That page is not in the deck.",
+                 message="The address may be mistyped, or the page may have moved.")
 
 
 # --- tiny per-IP rate limit on reading creation (LLM calls cost money) ---
@@ -131,7 +156,9 @@ def _language_hint(request: Request) -> str:
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return _page(request, "index.html", spreads=list(SPREADS.values()))
+    # The Fool, card 0: the deck's first card stands at the door.
+    return _page(request, "index.html", spreads=list(SPREADS.values()),
+                 door_card=load_deck()[0])
 
 
 @app.get("/ask/{spread_key}", response_class=HTMLResponse)
@@ -151,7 +178,12 @@ async def create_reading(request: Request, spread_key: str = Form(...), question
     ip = request.client.host if request.client else "?"
     if _rate_limited(ip, settings.readings_per_hour):
         return _page(request, "error.html", status_code=429,
-                     message="The deck needs a rest — please try again in a while.")
+                     headline="The deck needs a rest.",
+                     message=f"It gives {settings.readings_per_hour} readings an hour to "
+                             "each visitor. Try again a little later.")
+    # The question is one line of context: a textarea can carry newlines,
+    # which would break the quoted line it occupies in the prompt.
+    question = " ".join(question.split())[:500]
     r = await reading_service.create_reading(
         settings, spread, question, language_hint=_language_hint(request)
     )
@@ -163,7 +195,8 @@ async def show_reading(request: Request, reading_id: str):
     r = reading_service.store.get(reading_id)
     if r is None:
         return _page(request, "error.html", status_code=404,
-                     message="This reading has drifted beyond recall. Draw a fresh one.")
+                     headline="This reading is gone.",
+                     message="It has drifted beyond recall. Draw a fresh one.")
     return _page(request, "reading.html", reading=r)
 
 

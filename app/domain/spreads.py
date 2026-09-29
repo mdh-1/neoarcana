@@ -108,7 +108,7 @@ SPREADS: dict[str, Spread] = {
                     position=4,
                     name="The Future",
                     description=(
-                        "What is likely to occur within the next few weeks or months. "
+                        "What is likely to occur within the next few weeks or months: "
                         "not the final outcome, simply the next step on the journey."
                     ),
                 ),
