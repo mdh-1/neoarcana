@@ -99,7 +99,15 @@ async def _answer_head_requests(request: Request, call_next):
     if request.method != "HEAD":
         return await call_next(request)
     request.scope["method"] = "GET"
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    finally:
+        # Put it back before the response is sent. Uvicorn reads the method
+        # from this same scope when it sends: left as GET, it expected a body
+        # to match Content-Length, found none, and logged a traceback on
+        # every HEAD. The test client never reaches that layer, so only a
+        # real server shows it.
+        request.scope["method"] = "HEAD"
     return Response(status_code=response.status_code, headers=dict(response.headers))
 
 

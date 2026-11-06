@@ -161,3 +161,31 @@ def test_question_is_stored_as_one_line(client):
                     follow_redirects=False)
     rid = r.headers["location"].rsplit("/", 1)[1]
     assert reading_service.store.get(rid).question == "first line second line"
+
+
+def test_head_survives_a_real_server():
+    """The test client stops short of uvicorn's protocol layer, which is
+    where HEAD broke: the middleware left the method as GET, so uvicorn
+    expected a body to match Content-Length and raised on every HEAD."""
+    import socket, subprocess, sys, time, urllib.request
+
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0)); port = s.getsockname()[1]
+    proc = subprocess.Popen(
+        [sys.executable, "-m", "uvicorn", "app.main:app", "--port", str(port), "--log-level", "warning"],
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+    )
+    try:
+        for _ in range(100):
+            try:
+                urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=1); break
+            except Exception:
+                time.sleep(0.1)
+        req = urllib.request.Request(f"http://127.0.0.1:{port}/", method="HEAD")
+        with urllib.request.urlopen(req, timeout=5) as r:
+            assert r.status == 200 and r.read() == b""
+            assert int(r.headers["content-length"]) > 0
+        urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=5).read()
+    finally:
+        proc.terminate(); out = proc.communicate(timeout=10)[0]
+    assert "Content-Length" not in out and "Traceback" not in out, out
